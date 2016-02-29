@@ -1,0 +1,24 @@
+theodoro areel mattoso neto concluiu 
+<PREP> graduacao <PREP> ciencia <PREP> computacao <PREP> universidade <PREP> sul 
+<PREP> santa catarina <PREP> 2014 
+concluiu <PREP> curso <PREP> aperfeicoamento 
+<PREP> teste <PREP> invasao <PREP> redes <PREP> sistemas <PREP> academia 
+clavis <PREP> seguranca <PREP> informacao 
+cursa pos graduacao <PREP> gestao 
+<PREP> seguranca <PREP> informacao <PREP> universidade <PREP> sul <PREP> santa 
+catarina null_2 desenvolvedor java junior 
+<PREP> instituto stela <PREP> 2012 
+<PREP> 2013 participou <PREP> 1 
+projeto <PREP> pesquisa atualmente participa 
+<PREP> 4 projetos <PREP> pesquisa 
+atua <PREP> area <PREP> ciencia 
+<PREP> computacao <PREP> foco <PREP> desenvolvimento <PREP> software <PREP> linguagem 
+java <PREP> pesquisa <PREP> desenvolvimento 
+<PREP> implementacao <PREP> rotinas <PREP> politicas <PREP> seguranca <PREP> informacao 
+<PREP> nivel <PREP> aplicacao null_2 atividades profissionais interagiu <PREP> 16 
+colaboradores <PREP> co autorias <PREP> trabalhos cientificos forense computacional <PREP> estudo <PREP> aplicacoes <PREP> metodos 
+investigativos forense <PREP> ambientes corporativos 
+forense computacional <PREP> estudo <PREP> aplicacoes <PREP> metodos investigativos forense 
+<PREP> ambientes corporativos informacao seguranca 
+criptografia java conhecimento assinatura analise 
+forense inovacao coleta projetos plataforma
