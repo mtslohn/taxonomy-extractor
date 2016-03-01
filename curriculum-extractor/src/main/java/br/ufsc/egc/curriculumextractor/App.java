@@ -23,7 +23,7 @@ public class App {
 					"corpus/pt-ner.bin"));
 			NameFinderME nameFinderME = new NameFinderME(model);
 			reader = new BufferedReader(new FileReader(
-					"src/main/resources/curriculum.clean.txt"));
+					"src/main/resources/curriculum.txt"));
 			StringBuilder builder = new StringBuilder();
 			String line = reader.readLine();
 			while (line != null) {
@@ -31,18 +31,23 @@ public class App {
 				builder.append(" ");
 				line = reader.readLine();
 			}
-			String[] sentences = builder.toString().replaceAll("\\.", ".").split(" ");
+			String[] sentences = clearString(builder.toString()).split(" ");
 			Span[] spans = nameFinderME.find(sentences);
 			for (Span span : spans) {
 				if (!span.getType().equals("time")
 						&& !span.getType().equals("numeric")) {
-					System.out.println(span.toString());
+					
 					StringBuilder spanBuilder = new StringBuilder();
 					for (int index = span.getStart(); index < span.getEnd(); index++) {
 						spanBuilder.append(sentences[index]);
 						spanBuilder.append(" ");
 					}
-					System.out.println(spanBuilder.toString());
+
+					String result = spanBuilder.toString();
+					if (isValidString(result)) {
+						System.out.println(span.toString());
+						System.out.println(result);
+					}
 				}
 			}
 		} catch (InvalidFormatException e) {
@@ -62,5 +67,15 @@ public class App {
 			}
 		}
 
+	}
+
+	private static boolean isValidString(String result) {
+		if (result.trim().equals("PREP"))
+			return false;
+		return true;
+	}
+	
+	private static String clearString(String dirtyText) {
+		return dirtyText.replaceAll("\\.", ".").replaceAll("\n", " ");
 	}
 }
