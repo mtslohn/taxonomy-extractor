@@ -21,7 +21,7 @@ public class EntityExtractor {
 	public static void main(String[] args) {
 
 		try {
-			SentenceSpan sentenceSpan = getEntities();
+			TokenSpan sentenceSpan = getEntities();
 
 			for (Span span : sentenceSpan.spans) {
 				if (!span.getType().equals("time")
@@ -29,7 +29,7 @@ public class EntityExtractor {
 
 					StringBuilder spanBuilder = new StringBuilder();
 					for (int index = span.getStart(); index < span.getEnd(); index++) {
-						spanBuilder.append(sentenceSpan.sentences[index]);
+						spanBuilder.append(sentenceSpan.tokens[index]);
 						spanBuilder.append(" ");
 					}
 
@@ -57,7 +57,7 @@ public class EntityExtractor {
 		return dirtyText.replaceAll("\\.", ".").replaceAll("\n", " ");
 	}
 
-	public static SentenceSpan getEntities() throws IOException {
+	public static TokenSpan getEntities() throws IOException {
 
 		BufferedReader reader = null;
 		try {
@@ -69,14 +69,15 @@ public class EntityExtractor {
 			StringBuilder builder = new StringBuilder();
 			String line = reader.readLine();
 			while (line != null) {
+				line = line.replaceAll("\\(|\\)|\\,|\\.|\\;", "");
 				builder.append(line);
 				builder.append(" ");
 				line = reader.readLine();
 			}
 
-			SentenceSpan sentenceSpan = new SentenceSpan();
-			sentenceSpan.sentences = clearString(builder.toString()).split(" ");
-			sentenceSpan.spans = nameFinderME.find(sentenceSpan.sentences);
+			TokenSpan sentenceSpan = new TokenSpan();
+			sentenceSpan.tokens = clearString(builder.toString()).split(" ");
+			sentenceSpan.spans = nameFinderME.find(sentenceSpan.tokens);
 			return sentenceSpan;
 		} finally {
 			if (reader != null) {
@@ -90,9 +91,11 @@ public class EntityExtractor {
 		}
 	}
 
-	public static class SentenceSpan {
+	public static class TokenSpan {
 
-		String[] sentences;
+		String[] tokens;
 		Span[] spans;
 	}
+	
+	
 }
