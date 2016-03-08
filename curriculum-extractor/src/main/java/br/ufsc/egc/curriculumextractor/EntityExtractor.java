@@ -90,7 +90,7 @@ public class EntityExtractor {
 		}
 	}
 
-	private static class SentenceSpan {
+	public static class SentenceSpan {
 
 		String[] sentences;
 		Span[] spans;
