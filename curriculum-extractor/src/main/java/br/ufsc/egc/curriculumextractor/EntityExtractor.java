@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
-import opennlp.tools.util.InvalidFormatException;
 import opennlp.tools.util.Span;
 
 /**
@@ -40,7 +39,7 @@ public class EntityExtractor {
 					}
 				}
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -95,7 +94,7 @@ public class EntityExtractor {
 
 		String[] tokens;
 		Span[] spans;
+		
 	}
-	
-	
+
 }

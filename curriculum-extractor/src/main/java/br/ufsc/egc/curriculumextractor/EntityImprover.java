@@ -1,7 +1,6 @@
 package br.ufsc.egc.curriculumextractor;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,16 +18,14 @@ import br.ufsc.egc.curriculumextractor.EntityExtractor.TokenSpan;
 
 public class EntityImprover {
 
-	static Map<String, Integer> entitiesCount = new HashMap<String, Integer>();
+	Map<String, Integer> entitiesCount = new HashMap<String, Integer>();
 
-	public static void main(String[] args) {
+	public Map<String, Integer> getSortedEntitiesMap() {
 
 		CharArraySet stopSet = PortugueseAnalyzer.getDefaultStopSet();
 
 		try {
 			TokenSpan sentenceSpan = EntityExtractor.getEntities();
-
-			StringBuilder resultBuilder = new StringBuilder();
 
 			for (Span span : sentenceSpan.spans) {
 				if (!span.getType().equals("time")
@@ -53,18 +50,17 @@ public class EntityImprover {
 			}
 			
 			Map<String, Integer> sortedMap = sortByValue(entitiesCount);
-
-			for (String key : sortedMap.keySet()) {
-				System.out.println(key + ": " + entitiesCount.get(key));
-			}
+			
+			return sortedMap;
 
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
 
 	}
 
-	private static void addToEntitiesCount(String term) {
+	private void addToEntitiesCount(String term) {
 
 		if (entitiesCount.containsKey(term)) {
 			int freq = entitiesCount.get(term);
@@ -75,7 +71,7 @@ public class EntityImprover {
 
 	}
 
-	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(
+	public <K, V extends Comparable<? super V>> Map<K, V> sortByValue(
 			Map<K, V> map) {
 		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(
 				map.entrySet());
