@@ -21,4 +21,9 @@ public class EntityPair {
 		this.entity2 = entity2;
 	}
 
+	@Override
+	public String toString() {
+		return "EntityPair [entity1=" + entity1 + ", entity2=" + entity2 + "]";
+	}
+
 }

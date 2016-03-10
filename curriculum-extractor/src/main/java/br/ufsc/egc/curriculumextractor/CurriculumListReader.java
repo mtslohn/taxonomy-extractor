@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class CurriculumListReader {
 
-	private static final String CURRICULUM_LIST_TXT = "curriculum.list.txt";
+	private static final String CURRICULUM_LIST_TXT = "src/main/resources/curriculum.list.txt";
 
 	public Map<Integer, String> read() {
 
@@ -31,6 +31,7 @@ public class CurriculumListReader {
 				
 				if (!line.startsWith("=")) {
 					curriculumMap.put(key, line);
+					key++;
 				}
 				
 				line = bufferedReader.readLine();

@@ -1,6 +1,7 @@
 package br.ufsc.egc.curriculumextractor.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class CurriculumCorrelation {
@@ -22,6 +23,23 @@ public class CurriculumCorrelation {
 
 	public void setPairs(List<EntityPair> pairs) {
 		this.pairs = pairs;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder output = new StringBuilder();
+		output.append("CurriculumCorrelation [curriculumId=" + curriculumId
+				+ ", pairs="); 
+		Iterator<EntityPair> itPairs = pairs.iterator();
+		while (itPairs.hasNext()) {
+			EntityPair pair = itPairs.next();
+			output.append(pair);
+			if (itPairs.hasNext()) {
+				output.append(", ");
+			}
+		}
+		output.append("]");
+		return output.toString();
 	}
 
 }
