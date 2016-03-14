@@ -7,6 +7,7 @@ import java.util.Map;
 
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
+import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 
 public class EntityCurriculumMatcher {
 
@@ -57,9 +58,19 @@ public class EntityCurriculumMatcher {
 
 		}
 		
+		EntityPairCoocurrenceManager manager = new EntityPairCoocurrenceManager();
+		
 		for (CurriculumCorrelation correlation: correlations) {
-			System.out.println(correlation);
+			for (EntityPair pair: correlation.getPairs()) {
+				manager.addPair(pair.getEntity1(), pair.getEntity2());
+			}
 		}
+		
+		System.out.println(manager.getPairs());
+		
+		// ja tenho as relacoes e a frequencia delas... agora eh hora de montar a arvore
+		
+		// TODO
 
 	}
 

@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.model;
 
+import java.util.Objects;
+
 public class EntityPair {
 
 	private String entity1;
@@ -25,5 +27,5 @@ public class EntityPair {
 	public String toString() {
 		return "EntityPair [entity1=" + entity1 + ", entity2=" + entity2 + "]";
 	}
-
+	
 }
