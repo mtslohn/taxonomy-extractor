@@ -70,8 +70,8 @@ public class EntityCurriculumMatcher {
 		
 		// ja tenho as relacoes e a frequencia delas... agora eh hora de montar a arvore
 		
-		// TODO
-
+		// TODO colocar na tree as relacoes descobertas e validadas na DBPedia
+		
 	}
 
 	private static Map<String, Integer> getFilteredMap(
