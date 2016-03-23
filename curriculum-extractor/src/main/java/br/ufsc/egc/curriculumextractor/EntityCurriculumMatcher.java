@@ -7,7 +7,10 @@ import java.util.Map;
 
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
+import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrence;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
+import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
 public class EntityCurriculumMatcher {
 
@@ -66,11 +69,23 @@ public class EntityCurriculumMatcher {
 			}
 		}
 		
-		System.out.println(manager.getPairs());
-		
 		// ja tenho as relacoes e a frequencia delas... agora eh hora de montar a arvore
-		
 		// TODO colocar na tree as relacoes descobertas e validadas na DBPedia
+		
+		DBPediaService dbPediaService = DBPediaService.getInstance();
+		
+		Tree tree = new Tree();
+		
+		for (EntityPairCoocurrence pair : manager.getPairs()) {
+			List<String> broadersEntity1 = dbPediaService.findAllNarrowConcepts(pair.getEntity1());
+			if (broadersEntity1.contains(pair.getEntity2())) {
+				System.out.println("ACHOU");
+			}
+			List<String> broadersEntity2 = dbPediaService.findAllNarrowConcepts(pair.getEntity2());
+			if (broadersEntity2.contains(pair.getEntity1())) {
+				System.out.println("ACHOU");
+			}
+		}
 		
 	}
 
