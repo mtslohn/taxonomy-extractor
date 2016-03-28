@@ -30,6 +30,9 @@ public class Term {
 	}
 	
 	public void addSon(Term term) {
+		if (this == term) {
+			throw new RuntimeException("Quebra de árvore");
+		}
 		sons.add(term);
 	}
 

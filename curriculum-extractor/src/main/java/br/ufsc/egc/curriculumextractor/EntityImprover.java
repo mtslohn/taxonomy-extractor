@@ -40,7 +40,9 @@ public class EntityImprover {
 							}
 						}
 						spanBuilder.append(term);
-						spanBuilder.append(" ");
+						if (index < span.getEnd() - 1) {
+							spanBuilder.append(" ");
+						} 
 					}
 
 					String term = spanBuilder.toString();

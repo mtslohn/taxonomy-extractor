@@ -12,7 +12,7 @@ import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
-public class EntityCurriculumMatcher {
+public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
 
 	public static void main(String[] args) {
 
@@ -87,22 +87,6 @@ public class EntityCurriculumMatcher {
 			}
 		}
 		
-	}
-
-	private static Map<String, Integer> getFilteredMap(
-			Map<String, Integer> entitiesCount) {
-
-		LinkedHashMap<String, Integer> entitiesCountCleanMap = new LinkedHashMap<String, Integer>();
-
-		for (String key : entitiesCount.keySet()) {
-			if (entitiesCount.get(key) == 2) {
-				break;
-			}
-			entitiesCountCleanMap.put(key, entitiesCount.get(key));
-		}
-
-		return entitiesCountCleanMap;
-
 	}
 
 }
