@@ -42,9 +42,11 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 			}
 		}
 		
-		System.out.println(tree.print());
+		// limpeza da arvore
+		Tree newTree = tree.clean(entitiesList);
 		
-		// TODO limpeza da arvore
+		System.out.println(newTree.print());
+		
 		
 	}
 	
