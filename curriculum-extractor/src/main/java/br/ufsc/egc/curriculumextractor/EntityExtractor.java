@@ -63,8 +63,7 @@ public class EntityExtractor {
 			TokenNameFinderModel model = new TokenNameFinderModel(new File(
 					NER_MODEL));
 			NameFinderME nameFinderME = new NameFinderME(model);
-			reader = new BufferedReader(new FileReader(
-					"src/main/resources/curriculum.list.txt"));
+			reader = new BufferedReader(new FileReader(CurriculumListReader.CURRICULUM_LIST_TXT));
 			StringBuilder builder = new StringBuilder();
 			String line = reader.readLine();
 			while (line != null) {
@@ -94,7 +93,7 @@ public class EntityExtractor {
 
 		String[] tokens;
 		Span[] spans;
-		
+
 	}
 
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class CurriculumListReader {
 
-	private static final String CURRICULUM_LIST_TXT = "src/main/resources/curriculum.list.txt";
+	public static final String CURRICULUM_LIST_TXT = "src/main/resources/curriculum.stored.txt";
 
 	public Map<Integer, String> read() {
 
