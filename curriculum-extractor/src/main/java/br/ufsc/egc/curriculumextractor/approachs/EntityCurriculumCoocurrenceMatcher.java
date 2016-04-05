@@ -1,10 +1,12 @@
-package br.ufsc.egc.curriculumextractor;
+package br.ufsc.egc.curriculumextractor.approachs;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.ufsc.egc.curriculumextractor.CurriculumListReader;
+import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrence;

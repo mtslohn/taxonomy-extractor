@@ -1,4 +1,4 @@
-package br.ufsc.egc.curriculumextractor;
+package br.ufsc.egc.curriculumextractor.approachs;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

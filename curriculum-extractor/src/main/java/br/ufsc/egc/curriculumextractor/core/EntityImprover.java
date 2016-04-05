@@ -1,4 +1,4 @@
-package br.ufsc.egc.curriculumextractor;
+package br.ufsc.egc.curriculumextractor.core;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -14,8 +14,6 @@ import opennlp.tools.util.Span;
 import org.apache.lucene.analysis.pt.PortugueseAnalyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
 
-import br.ufsc.egc.curriculumextractor.EntityExtractor.TokenSpan;
-
 public class EntityImprover {
 
 	Map<String, Integer> entitiesCount = new HashMap<String, Integer>();
@@ -25,7 +23,7 @@ public class EntityImprover {
 		CharArraySet stopSet = PortugueseAnalyzer.getDefaultStopSet();
 
 		try {
-			TokenSpan sentenceSpan = EntityExtractor.getEntities();
+			EntityExtractor.TokenSpan sentenceSpan = new EntityExtractor().getEntities();
 
 			for (Span span : sentenceSpan.spans) {
 				if (!span.getType().equals("time")

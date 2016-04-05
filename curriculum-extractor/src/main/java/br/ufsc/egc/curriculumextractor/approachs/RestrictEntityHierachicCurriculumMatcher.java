@@ -1,15 +1,19 @@
-package br.ufsc.egc.curriculumextractor;
+package br.ufsc.egc.curriculumextractor.approachs;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import br.ufsc.egc.curriculumextractor.core.EntityImprover;
+import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
-public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurriculumMatcher {
+public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurriculumMatcher {
 
-	public static void main(String[] args) {
+	private static final int LEVELS = 9;
+
+	public void process() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -24,19 +28,27 @@ public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurricu
 		
 		for (int index = 0; index < entitiesList.size(); index++) {
 			String entity = entitiesList.get(index);
-			List<String> results = dbPediaService.findBroaderConcepts(entity, 15);
+			Term hierarchy = dbPediaService.findTree(entity, LEVELS);
 			for (int innerIndex = 0; innerIndex < entitiesList.size(); innerIndex++) {
 				String innerEntity = entitiesList.get(innerIndex);
-				for (String result: results) {
-					if (innerEntity.trim().equalsIgnoreCase(result.trim())) {
-						addToTree(tree, innerEntity, entity);
+				Term result = hierarchy.find(entitiesList.get(innerIndex), true);
+				if (result != null) {
+					while (result.getParent() != null) {
+						addToTree(tree, result.getLabel(), result.getParent().getLabel());
+						result = result.getParent();
 					}
+					addToTree(tree, innerEntity, entity);
+					
 				}
 			}
 		}
 		
 		System.out.println(tree.print());
 		
+	}
+	
+	public static void main(String[] args) {
+		new RestrictEntityHierachicCurriculumMatcher().process();		
 	}
 
 }

@@ -1,9 +1,10 @@
-package br.ufsc.egc.curriculumextractor;
+package br.ufsc.egc.curriculumextractor.approachs;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
