@@ -68,7 +68,11 @@ public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculum
 		
 		EntityPairCoocurrenceManager manager = new EntityPairCoocurrenceManager();
 		
-		for (CurriculumCorrelation correlation: correlations) {
+		for (int index = 0; index < correlations.size(); index++) {
+			if (index % 1000 == 0) {
+				System.out.println("Processando " + index);
+			}
+			CurriculumCorrelation correlation = correlations.get(index);
 			for (EntityPair pair: correlation.getPairs()) {
 				manager.addPair(pair.getEntity1(), pair.getEntity2());
 			}
