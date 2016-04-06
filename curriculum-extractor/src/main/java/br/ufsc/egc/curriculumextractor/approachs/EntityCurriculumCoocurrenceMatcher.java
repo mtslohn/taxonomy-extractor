@@ -35,7 +35,10 @@ public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculum
 			String curriculum = curriculumMap.get(curriculumKey);
 
 			for (int indexOuter = 0; indexOuter < entities.size(); indexOuter++) {
+				
 				String entityOuter = entities.get(indexOuter);
+				
+				System.out.println("Entidade de fora: " + entityOuter);
 
 				if (curriculum.contains(entityOuter)) {
 
