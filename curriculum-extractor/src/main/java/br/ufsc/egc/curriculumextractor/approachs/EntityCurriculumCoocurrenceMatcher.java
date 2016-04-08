@@ -38,8 +38,6 @@ public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculum
 				
 				String entityOuter = entities.get(indexOuter);
 				
-				System.out.println("Entidade de fora: " + entityOuter);
-
 				if (curriculum.contains(entityOuter)) {
 
 					for (int indexInner = indexOuter + 1; indexInner < entities
@@ -85,12 +83,12 @@ public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculum
 		
 		Tree tree = new Tree();
 		
-		for (EntityPairCoocurrence pair : manager.getPairs()) {
-			List<String> broadersEntity1 = dbPediaService.findAllNarrowConcepts(pair.getEntity1());
+		for (EntityPair pair : manager.getPairsCoocurrence().keySet()) {
+			List<String> broadersEntity1 = dbPediaService.findAllBroaderConcepts(pair.getEntity1());
 			if (broadersEntity1.contains(pair.getEntity2())) {
 				System.out.println("ACHOU");
 			}
-			List<String> broadersEntity2 = dbPediaService.findAllNarrowConcepts(pair.getEntity2());
+			List<String> broadersEntity2 = dbPediaService.findAllBroaderConcepts(pair.getEntity2());
 			if (broadersEntity2.contains(pair.getEntity1())) {
 				System.out.println("ACHOU");
 			}

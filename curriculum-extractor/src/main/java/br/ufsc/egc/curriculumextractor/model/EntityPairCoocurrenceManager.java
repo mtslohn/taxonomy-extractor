@@ -1,47 +1,42 @@
 package br.ufsc.egc.curriculumextractor.model;
 
-import java.util.HashSet;
+import gnu.trove.map.hash.THashMap;
+
+import java.util.Map;
 import java.util.Set;
 
 public class EntityPairCoocurrenceManager {
 	
-	private Set<EntityPairCoocurrence> pairs;
+	private Map<EntityPair, Integer> pairsCoocurrence;
 	
 	public EntityPairCoocurrenceManager() {
-		pairs = new HashSet<EntityPairCoocurrence>();
+		pairsCoocurrence = new THashMap<EntityPair, Integer>();
 	}
 	
 	public void addPair(String entity1, String entity2) {
-		EntityPairCoocurrence pair = findOrCreatePair(entity1, entity2);
-		pair.increment();
+		if (!incrementIfExists(entity1, entity2) && !incrementIfExists(entity2, entity1)) {
+			incrementNew(entity1, entity2);
+		}
 	}
 
-	private EntityPairCoocurrence findOrCreatePair(String entity1, String entity2) {
-		EntityPairCoocurrence pair = findPair(entity1, entity2);
-		if (pair == null) {
-			pair = new EntityPairCoocurrence();
-			pair.setEntity1(entity1);
-			pair.setEntity2(entity2);
-			pairs.add(pair);
+	public boolean incrementIfExists(String entity1, String entity2) {
+		EntityPair pair = new EntityPair(entity1, entity2);
+		Integer cofrequency = pairsCoocurrence.get(pair);
+		if (cofrequency != null) {
+			cofrequency++;
+			pairsCoocurrence.put(pair, cofrequency);
+			return true;
 		}
-		return pair;
-	}
-
-	// substitui o equals para buscar por pares
-	public EntityPairCoocurrence findPair(String entity1, String entity2) {
-		for (EntityPairCoocurrence pair: pairs) {
-			if (pair.getEntity1().equals(entity1) && pair.getEntity2().equals(entity2)) {
-				return pair;
-			}
-			if (pair.getEntity1().equals(entity2) && pair.getEntity2().equals(entity1)) {
-				return pair;
-			}
-		}
-		return null;
+		return false;
 	}
 	
-	public Set<EntityPairCoocurrence> getPairs() {
-		return pairs;
+	public void incrementNew(String entity1, String entity2) {
+		EntityPair pair = new EntityPair(entity1, entity2);
+		pairsCoocurrence.put(pair, 1);
 	}
 
+	public Map<EntityPair, Integer> getPairsCoocurrence() {
+		return pairsCoocurrence;
+	}
+	
 }
