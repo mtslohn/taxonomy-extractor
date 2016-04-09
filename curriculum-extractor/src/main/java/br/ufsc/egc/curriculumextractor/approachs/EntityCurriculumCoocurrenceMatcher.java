@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
@@ -15,6 +17,8 @@ import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
 public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
+	
+	private static final Logger LOGGER = Logger.getLogger(EntityCurriculumCoocurrenceMatcher.class);
 
 	public static void main(String[] args) {
 
@@ -68,7 +72,7 @@ public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculum
 		
 		for (int index = 0; index < correlations.size(); index++) {
 			if (index % 1000 == 0) {
-				System.out.println("Processando " + index);
+				LOGGER.info("Processando " + index);
 			}
 			CurriculumCorrelation correlation = correlations.get(index);
 			for (EntityPair pair: correlation.getPairs()) {
@@ -84,15 +88,17 @@ public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculum
 		Tree tree = new Tree();
 		
 		for (EntityPair pair : manager.getPairsCoocurrence().keySet()) {
-			List<String> broadersEntity1 = dbPediaService.findAllBroaderConcepts(pair.getEntity1());
+			List<String> broadersEntity1 = dbPediaService.findBroaderConcepts(pair.getEntity1());
 			if (broadersEntity1.contains(pair.getEntity2())) {
-				System.out.println("ACHOU");
+				tree.addToTree(pair.getEntity2(), pair.getEntity1());
 			}
-			List<String> broadersEntity2 = dbPediaService.findAllBroaderConcepts(pair.getEntity2());
+			List<String> broadersEntity2 = dbPediaService.findBroaderConcepts(pair.getEntity2());
 			if (broadersEntity2.contains(pair.getEntity1())) {
-				System.out.println("ACHOU");
+				tree.addToTree(pair.getEntity1(), pair.getEntity2());
 			}
 		}
+		
+		System.out.println(tree.print());
 		
 	}
 
