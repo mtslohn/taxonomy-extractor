@@ -98,6 +98,8 @@ public class EntityCurriculumCoocurrenceMatcher extends AbstractEntityCurriculum
 			}
 		}
 		
+		tree.join();
+		
 		System.out.println(tree.print());
 		
 	}
