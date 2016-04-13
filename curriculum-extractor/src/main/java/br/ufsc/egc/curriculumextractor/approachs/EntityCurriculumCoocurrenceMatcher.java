@@ -1,12 +1,6 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +10,9 @@ import br.ufsc.egc.curriculumextractor.CurriculumListReader;
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
-import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrence;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.curriculumextractor.util.TreeOutput;
+import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
 public class EntityCurriculumCoocurrenceMatcher extends
@@ -28,7 +21,7 @@ public class EntityCurriculumCoocurrenceMatcher extends
 	private static final Logger LOGGER = Logger
 			.getLogger(EntityCurriculumCoocurrenceMatcher.class);
 
-	public static void main(String[] args) {
+	public Tree createTree() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -109,9 +102,21 @@ public class EntityCurriculumCoocurrenceMatcher extends
 			}
 		}
 		
-		TreeOutput treeOutput = new TreeOutput();
-		treeOutput.write(tree);
+		return tree;
 		
+	}
+	
+	public void process() {
+		
+		Tree tree = createTree();
+		
+		TreeWriter treeWriter = new TreeWriter();
+		treeWriter.write(getClass().getSimpleName(), tree);
+		
+	}
+	
+	public static void main(String[] args) {
+		new EntityCurriculumCoocurrenceMatcher().process();
 	}
 
 }
