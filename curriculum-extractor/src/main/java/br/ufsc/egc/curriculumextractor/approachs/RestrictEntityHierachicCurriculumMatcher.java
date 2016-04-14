@@ -13,7 +13,7 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 
 	private static final int LEVELS = 9;
 
-	public void process() {
+	public Tree createTree() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -43,12 +43,12 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 			}
 		}
 		
-		System.out.println(tree.print());
+		return tree;
 		
 	}
 	
 	public static void main(String[] args) {
-		new RestrictEntityHierachicCurriculumMatcher().process();		
+		new RestrictEntityHierachicCurriculumMatcher().writeTree();
 	}
 
 }

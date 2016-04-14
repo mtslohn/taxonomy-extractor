@@ -10,7 +10,7 @@ import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
 public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurriculumMatcher {
 
-	public static void main(String[] args) {
+	public Tree createTree() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -25,7 +25,7 @@ public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurricu
 		
 		for (int index = 0; index < entitiesList.size(); index++) {
 			String entity = entitiesList.get(index);
-			List<String> results = dbPediaService.findBroaderConcepts(entity, 15);
+			List<String> results = dbPediaService.findBroaderConcepts(entity, 3);
 			for (int innerIndex = 0; innerIndex < entitiesList.size(); innerIndex++) {
 				String innerEntity = entitiesList.get(innerIndex);
 				for (String result: results) {
@@ -36,8 +36,12 @@ public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurricu
 			}
 		}
 		
-		System.out.println(tree.print());
+		return tree;
 		
+	}
+	
+	public static void main(String[] args) {
+		new RestrictLevelsEntityCurriculumMatcher().writeTree();
 	}
 
 }

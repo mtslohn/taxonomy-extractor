@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import br.ufsc.egc.curriculumextractor.approachs.AbstractEntityCurriculumMatcher;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 
-public class TreeJoiner extends AbstractEntityCurriculumMatcher {
+public class TreeJoiner {
 	
 	private static final Logger LOGGER = Logger.getLogger(TreeJoiner.class);
 	

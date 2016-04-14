@@ -10,7 +10,7 @@ import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
 public class RestrictEntityCurriculumMatcher extends AbstractEntityCurriculumMatcher {
 
-	public static void main(String[] args) {
+	public Tree createTree() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -36,8 +36,12 @@ public class RestrictEntityCurriculumMatcher extends AbstractEntityCurriculumMat
 			}
 		}
 		
-		System.out.println(tree.print());
+		return tree;
 		
+	}
+	
+	public static void main(String[] args) {
+		new RestrictEntityCurriculumMatcher().writeTree();
 	}
 
 }

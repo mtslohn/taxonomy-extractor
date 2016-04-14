@@ -106,17 +106,8 @@ public class EntityCurriculumCoocurrenceMatcher extends
 		
 	}
 	
-	public void process() {
-		
-		Tree tree = createTree();
-		
-		TreeWriter treeWriter = new TreeWriter();
-		treeWriter.write(getClass().getSimpleName(), tree);
-		
-	}
-	
 	public static void main(String[] args) {
-		new EntityCurriculumCoocurrenceMatcher().process();
+		new EntityCurriculumCoocurrenceMatcher().writeTree();
 	}
 
 }

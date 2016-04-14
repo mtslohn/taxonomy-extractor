@@ -13,7 +13,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 
 	private static final int LEVELS = 9;
 
-	public void process() {
+	public Tree createTree() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -46,13 +46,13 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 		// limpeza da arvore
 		Tree newTree = tree.clean(entitiesList);
 		
-		System.out.println(newTree.print());
+		return newTree;
 		
 		
 	}
 	
 	public static void main(String[] args) {
-		new RestrictEntityHierachicCleanedCurriculumMatcher().process();		
+		new RestrictEntityHierachicCleanedCurriculumMatcher().writeTree();		
 	}
 
 }

@@ -3,8 +3,7 @@ package br.ufsc.egc.curriculumextractor.approachs;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
-public class EntityCurriculumCoocurrenceMatcherWithJoin extends
-		AbstractEntityCurriculumMatcher {
+public class EntityCurriculumCoocurrenceMatcherWithJoin {
 
 	public void process() {
 		
