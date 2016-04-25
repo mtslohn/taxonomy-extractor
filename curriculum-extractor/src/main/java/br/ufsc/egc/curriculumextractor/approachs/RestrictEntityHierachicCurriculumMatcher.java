@@ -31,13 +31,13 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 			Term hierarchy = dbPediaService.findTree(entity, LEVELS);
 			for (int innerIndex = 0; innerIndex < entitiesList.size(); innerIndex++) {
 				String innerEntity = entitiesList.get(innerIndex);
-				Term result = hierarchy.find(entitiesList.get(innerIndex), true);
+				Term result = hierarchy.find(innerEntity, true);
 				if (result != null) {
 					while (result.getParent() != null) {
 						addToTree(tree, result.getLabel(), result.getParent().getLabel());
 						result = result.getParent();
 					}
-					addToTree(tree, innerEntity, entity);
+					addToTree(tree, result.getLabel(), entity);
 					
 				}
 			}
