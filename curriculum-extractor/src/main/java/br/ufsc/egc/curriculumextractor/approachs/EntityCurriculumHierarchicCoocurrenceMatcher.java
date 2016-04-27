@@ -3,6 +3,7 @@ package br.ufsc.egc.curriculumextractor.approachs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -13,7 +14,6 @@ import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
 public class EntityCurriculumHierarchicCoocurrenceMatcher extends
@@ -91,37 +91,44 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		DBPediaService dbPediaService = DBPediaService.getInstance();
 
 		Tree tree = new Tree();
-
-		for (EntityPair pair : manager.getPairsCoocurrence().keySet()) {
-			Term hierarchy1 = dbPediaService
-					.findTree(pair.getEntity1(), LEVELS);
-			if (hierarchy1 != null) {
-				Term result1 = hierarchy1.find(pair.getEntity2(), true);
-				if (result1 != null) {
-					while (result1.getParent() != null) {
-						addToTree(tree, result1.getLabel(), result1.getParent()
-								.getLabel());
-						result1 = result1.getParent();
-					}
-					addToTree(tree, result1.getLabel(), pair.getEntity1());
-
-				}
+		
+		List<EntityPair> keyList = new ArrayList<EntityPair>(manager.getPairsCoocurrence().keySet());
+		
+		for (int index = 0; index < keyList.size(); index++) {
+			if (index % 1000 == 0) {
+				LOGGER.info("Procurando hierarquias para o par " + index);
 			}
-			if (hierarchy1.find(pair.getEntity2(), true) != null) {
-				tree.addToTree(pair.getEntity2(), pair.getEntity1());
-			}
-			}
-			List<String> broadersEntity2 = dbPediaService
-					.findBroaderConcepts(pair.getEntity2());
-			if (broadersEntity2.contains(pair.getEntity1())) {
-				tree.addToTree(pair.getEntity1(), pair.getEntity2());
-			}
+			EntityPair pair = keyList.get(index);
+			findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(), pair.getEntity2());
+			findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(), pair.getEntity1());
 		}
 		
 		return tree;
 		
 	}
-	
+
+	private void findAndAddHierarchy(DBPediaService dbPediaService, Tree tree,
+			String sonLabel, String fatherLabel) {
+		Term hierarchy = dbPediaService
+				.findTree(sonLabel, LEVELS);
+		if (hierarchy != null) {
+			Term result = hierarchy.find(fatherLabel, true);
+			if (result != null) {
+				addHierarchy(tree, sonLabel, result);
+			}
+		}
+	}
+
+
+	private void addHierarchy(Tree tree, String sonLabel, Term fatherTerm) {
+		while (fatherTerm.getParent() != null) {
+			addToTree(tree, fatherTerm.getLabel(), fatherTerm.getParent()
+					.getLabel());
+			fatherTerm = fatherTerm.getParent();
+		}
+		addToTree(tree, fatherTerm.getLabel(), sonLabel);
+	}
+
 	public static void main(String[] args) {
 		new EntityCurriculumHierarchicCoocurrenceMatcher().writeTree();
 	}

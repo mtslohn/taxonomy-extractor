@@ -33,18 +33,21 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 				String innerEntity = entitiesList.get(innerIndex);
 				Term result = hierarchy.find(innerEntity, true);
 				if (result != null) {
-					while (result.getParent() != null) {
-						addToTree(tree, result.getLabel(), result.getParent().getLabel());
-						result = result.getParent();
-					}
-					addToTree(tree, result.getLabel(), entity);
-					
+					addHierarchy(tree, entity, result);
 				}
 			}
 		}
 		
 		return tree;
 		
+	}
+
+	private void addHierarchy(Tree tree, String sonLabel, Term fatherTerm) {
+		while (fatherTerm.getParent() != null) {
+			addToTree(tree, fatherTerm.getLabel(), fatherTerm.getParent().getLabel());
+			fatherTerm = fatherTerm.getParent();
+		}
+		addToTree(tree, fatherTerm.getLabel(), sonLabel);
 	}
 	
 	public static void main(String[] args) {
