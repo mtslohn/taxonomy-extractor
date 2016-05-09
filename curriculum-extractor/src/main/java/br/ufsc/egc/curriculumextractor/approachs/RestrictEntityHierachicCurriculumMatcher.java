@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
+import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
@@ -13,7 +14,7 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 
 	private static final int LEVELS = 9;
 
-	public Tree createTree() {
+	public ApproachResponse createTree() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -38,7 +39,7 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 			}
 		}
 		
-		return tree;
+		return new ApproachResponse(tree, entitiesList);
 		
 	}
 
