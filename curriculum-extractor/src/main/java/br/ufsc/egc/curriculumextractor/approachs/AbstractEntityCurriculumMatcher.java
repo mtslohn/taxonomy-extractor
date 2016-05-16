@@ -50,8 +50,6 @@ public abstract class AbstractEntityCurriculumMatcher {
 	
 	public abstract Tree createTree();
 	
-
-	
 	public void writeTree() {
 		
 		Tree tree = createTree();
@@ -60,5 +58,5 @@ public abstract class AbstractEntityCurriculumMatcher {
 		treeWriter.write(getClass().getSimpleName(), tree);
 		
 	}
-
+	
 }
