@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
@@ -48,11 +49,11 @@ public abstract class AbstractEntityCurriculumMatcher {
 		term.addSon(sonTerm);
 	}
 	
-	public abstract Tree createTree();
+	public abstract ApproachResponse createTree();
 	
 	public void writeTree() {
 		
-		Tree tree = createTree();
+		Tree tree = createTree().getTree();
 		
 		TreeWriter treeWriter = new TreeWriter();
 		treeWriter.write(getClass().getSimpleName(), tree);

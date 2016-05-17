@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
+import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
@@ -21,7 +22,7 @@ public class EntityCurriculumCoocurrenceMatcher extends
 	private static final Logger LOGGER = Logger
 			.getLogger(EntityCurriculumCoocurrenceMatcher.class);
 
-	public Tree createTree() {
+	public ApproachResponse createTree() {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -102,7 +103,7 @@ public class EntityCurriculumCoocurrenceMatcher extends
 			}
 		}
 		
-		return tree;
+		return new ApproachResponse(tree, entities);
 		
 	}
 	

@@ -9,7 +9,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcherWithJoin {
 		
 		RestrictEntityHierachicCleanedCurriculumMatcher approach = new RestrictEntityHierachicCleanedCurriculumMatcher();
 		
-		Tree tree = approach.createTree();
+		Tree tree = approach.createTree().getTree();
 		
 		tree.join();
 		

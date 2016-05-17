@@ -9,7 +9,7 @@ public class EntityCurriculumCoocurrenceMatcherWithJoin {
 		
 		EntityCurriculumCoocurrenceMatcher approach = new EntityCurriculumCoocurrenceMatcher();
 		
-		Tree tree = approach.createTree();
+		Tree tree = approach.createTree().getTree();
 		
 		tree.join();
 		
