@@ -11,6 +11,7 @@ public class TreeMetrics {
 	private int expansionSum = 0;
 	private double expansionFactorAvg;
 	private double densityAvg;
+	private double termLevelAvg;
 
 	public TreeMetrics(Tree tree) {
 		calculateSums(tree);
@@ -64,12 +65,16 @@ public class TreeMetrics {
 	public double getDensityAvg() {
 		return densityAvg;
 	}
+	
+	public double getTermLevelAvg() {
+		return termLevelAvg;
+	}
 
 	public String print() {
 		return "nodeCount=" + nodeCount + "\nmaxLevel=" + maxLevel
 				+ "\nexpansions=" + expansions + "\nexpansionSum="
 				+ expansionSum + "\nexpansionFactorAvg=" + expansionFactorAvg
-				+ "\ndensityAvg=" + densityAvg + "";
+				+ "\ndensityAvg=" + densityAvg + "\ntermLevelAvg=" + termLevelAvg;
 	}
 
 }
