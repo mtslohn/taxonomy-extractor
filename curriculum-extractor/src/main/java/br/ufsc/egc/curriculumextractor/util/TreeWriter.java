@@ -11,6 +11,7 @@ import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 
 public class TreeWriter {
 
+	private static final String SPACER = "\n\n========\n\n";
 	private static final String FILE_NAME_TEMPLATE = "results/%s-%s.txt";
 	private static final String DATE_FORMAT = "yyyy-MM-dd.HH.mm.ss";
 
@@ -26,6 +27,14 @@ public class TreeWriter {
 			fileWriter = new FileWriter(file);
 			buffWriter = new BufferedWriter(fileWriter);
 			buffWriter.write(tree.print());
+			
+			buffWriter.write(SPACER);
+			
+			TreeMetrics metrics = new TreeMetrics(tree);
+			buffWriter.write(metrics.print());
+			
+			buffWriter.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
