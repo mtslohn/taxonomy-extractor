@@ -12,6 +12,7 @@ public class TreeMetrics {
 	private double expansionFactorAvg;
 	private double densityAvg;
 	private double termLevelAvg;
+	private int termLevelSum = 0;
 
 	public TreeMetrics(Tree tree) {
 		calculateSums(tree);
@@ -20,6 +21,7 @@ public class TreeMetrics {
 
 	private void calculateStatistics() {
 		expansionFactorAvg = expansionSum/(double)expansions;
+		termLevelAvg = termLevelSum/(double)nodeCount;
 	}
 
 	private void calculateSums(Tree tree) {
@@ -33,6 +35,7 @@ public class TreeMetrics {
 		if (level > maxLevel) {
 			maxLevel = level;
 		}
+		termLevelSum += level;
 		if (!term.getSons().isEmpty()) {
 			expansions++;
 			expansionSum += term.getSons().size();

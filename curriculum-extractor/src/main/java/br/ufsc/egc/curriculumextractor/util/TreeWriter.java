@@ -24,14 +24,15 @@ public class TreeWriter {
 		FileWriter fileWriter = null;
 		BufferedWriter buffWriter = null;
 		try {
+			
 			fileWriter = new FileWriter(file);
 			buffWriter = new BufferedWriter(fileWriter);
-			buffWriter.write(tree.print());
-			
-			buffWriter.write(SPACER);
 			
 			TreeMetrics metrics = new TreeMetrics(tree);
+
 			buffWriter.write(metrics.print());
+			buffWriter.write(SPACER);
+			buffWriter.write(tree.print());
 			
 			buffWriter.flush();
 			
