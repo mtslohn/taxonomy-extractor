@@ -35,15 +35,32 @@ public abstract class AbstractEntityCurriculumMatcher {
 	
 	public static void addToTree(Tree tree, String broader, String narrower) {
 		if (broader.equalsIgnoreCase(narrower)) {
-			LOGGER.warn("Tentativa de inserir pai e filhos iguais. Abortando...");
+			LOGGER.debug("Tentativa de inserir pai e filhos iguais. Abortando...");
 			return;
 		}
+
 		Term term = tree.find(broader);
+		
 		if (term == null) {
+		
 			term = new Term();
 			term.setLabel(broader);
 			tree.addRoot(term);
+		
+		} else {
+
+			Term broaderParentIterator = term.getParent();
+			
+			while (broaderParentIterator != null) {
+				if (broaderParentIterator.getLabel().equalsIgnoreCase(narrower)) {
+					LOGGER.debug("Tentativa de inserir filho que já existe como pai. Abortando...");
+					return;
+				}
+				broaderParentIterator = broaderParentIterator.getParent();
+			}
+			
 		}
+		
 		Term sonTerm = new Term();
 		sonTerm.setLabel(narrower);
 		term.addSon(sonTerm);
