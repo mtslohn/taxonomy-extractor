@@ -4,11 +4,15 @@ import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
-public class EntityCurriculumHierarchicCoocurrenceMatcherCleanedWithJoin {
+public class EntityCurriculumHierarchicCoocurrenceMatcherCleanedWithJoin implements HierarchicApproach {
+	
+	EntityCurriculumHierarchicCoocurrenceMatcher approach = new EntityCurriculumHierarchicCoocurrenceMatcher();
+	
+	public int getLevels() {
+		return approach.getLevels(); 
+	}
 
 	public void process() {
-		
-		EntityCurriculumHierarchicCoocurrenceMatcher approach = new EntityCurriculumHierarchicCoocurrenceMatcher();
 		
 		ApproachResponse response = approach.createTree();
 		Tree tree = response.getTree();

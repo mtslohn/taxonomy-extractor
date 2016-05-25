@@ -3,7 +3,13 @@ package br.ufsc.egc.curriculumextractor.approachs;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
-public class RestrictEntityHierachicCleanedCurriculumMatcherWithJoin {
+public class RestrictEntityHierachicCleanedCurriculumMatcherWithJoin implements HierarchicApproach {
+	
+	RestrictEntityHierachicCleanedCurriculumMatcher approach = new RestrictEntityHierachicCleanedCurriculumMatcher();
+	
+	public int getLevels() {
+		return approach.getLevels();
+	}
 
 	public void process() {
 		

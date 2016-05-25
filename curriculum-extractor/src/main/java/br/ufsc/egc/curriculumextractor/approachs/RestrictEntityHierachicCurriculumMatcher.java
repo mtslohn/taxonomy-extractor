@@ -10,9 +10,13 @@ import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 
-public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurriculumMatcher {
+public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurriculumMatcher implements HierarchicApproach {
 
-	private static final int LEVELS = 9;
+	private static final int LEVELS = 2;
+	
+	public int getLevels() {
+		return LEVELS;
+	}
 
 	public ApproachResponse createTree() {
 

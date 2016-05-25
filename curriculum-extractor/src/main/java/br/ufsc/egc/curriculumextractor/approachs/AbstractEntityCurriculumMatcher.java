@@ -73,7 +73,11 @@ public abstract class AbstractEntityCurriculumMatcher {
 		Tree tree = createTree().getTree();
 		
 		TreeWriter treeWriter = new TreeWriter();
-		treeWriter.write(getClass().getSimpleName(), tree);
+		String fileName = getClass().getSimpleName();
+		if (this instanceof HierarchicApproach) {
+			fileName = fileName + "-" + ((HierarchicApproach)this).getLevels();
+		}
+		treeWriter.write(fileName, tree);
 		
 	}
 	
