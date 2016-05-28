@@ -16,14 +16,18 @@ public abstract class AbstractEntityCurriculumMatcher {
 	
 	private static final int ENTITY_THRESHOLD = 3;
 	private static final Logger LOGGER = Logger.getLogger(AbstractEntityCurriculumMatcher.class);
-
+	
 	protected static Map<String, Integer> getFilteredMap(Map<String, Integer> entitiesCount) {
+		return getFilteredMap(entitiesCount, ENTITY_THRESHOLD);
+	}
+
+	protected static Map<String, Integer> getFilteredMap(Map<String, Integer> entitiesCount, int entityThreshold) {
 	
 		LinkedHashMap<String, Integer> entitiesCountCleanMap = new LinkedHashMap<String, Integer>();
 	
 		for (String key : entitiesCount.keySet()) {
-			if (entitiesCount.get(key) == ENTITY_THRESHOLD) {
-				break;
+			if (entitiesCount.get(key) < entityThreshold) {
+				continue;
 			}
 			entitiesCountCleanMap.put(key, entitiesCount.get(key));
 		}
@@ -77,8 +81,9 @@ public abstract class AbstractEntityCurriculumMatcher {
 		
 		TreeWriter treeWriter = new TreeWriter();
 		String fileName = getClass().getSimpleName();
-		if (this instanceof HierarchicApproach) {
-			fileName = fileName + "-" + ((HierarchicApproach)this).getLevels();
+		if (this instanceof RestrictEntityHierachicCurriculumMatcher) {
+			RestrictEntityHierachicCurriculumMatcher thisApproach = (RestrictEntityHierachicCurriculumMatcher) this;
+			fileName = String.format("Frequencia absoluta - %s entityThreshold - %s levels", thisApproach.getEntityThreshold(), thisApproach.getLevels());
 		}
 		treeWriter.write(fileName, tree);
 		
