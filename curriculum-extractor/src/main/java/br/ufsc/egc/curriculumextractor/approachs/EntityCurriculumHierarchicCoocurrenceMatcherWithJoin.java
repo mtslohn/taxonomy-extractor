@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import java.rmi.RemoteException;
+
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
@@ -11,7 +13,7 @@ public class EntityCurriculumHierarchicCoocurrenceMatcherWithJoin implements Hie
 		return approach.getLevels();
 	}
 	
-	public void process() {
+	public void process() throws RemoteException {
 		
 		Tree tree = approach.createTree().getTree();
 		
@@ -22,7 +24,7 @@ public class EntityCurriculumHierarchicCoocurrenceMatcherWithJoin implements Hie
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException {
 		new EntityCurriculumHierarchicCoocurrenceMatcherWithJoin().process();
 	}
 

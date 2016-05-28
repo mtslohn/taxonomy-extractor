@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
 public abstract class AbstractEntityCurriculumMatcher {
 	
+	private static final int ENTITY_THRESHOLD = 3;
 	private static final Logger LOGGER = Logger.getLogger(AbstractEntityCurriculumMatcher.class);
 
 	protected static Map<String, Integer> getFilteredMap(Map<String, Integer> entitiesCount) {
@@ -19,7 +22,7 @@ public abstract class AbstractEntityCurriculumMatcher {
 		LinkedHashMap<String, Integer> entitiesCountCleanMap = new LinkedHashMap<String, Integer>();
 	
 		for (String key : entitiesCount.keySet()) {
-			if (entitiesCount.get(key) == 1) {
+			if (entitiesCount.get(key) == ENTITY_THRESHOLD) {
 				break;
 			}
 			entitiesCountCleanMap.put(key, entitiesCount.get(key));
@@ -66,9 +69,9 @@ public abstract class AbstractEntityCurriculumMatcher {
 		term.addSon(sonTerm);
 	}
 	
-	public abstract ApproachResponse createTree();
+	public abstract ApproachResponse createTree() throws RemoteException, NotBoundException;
 	
-	public void writeTree() {
+	public void writeTree() throws RemoteException, NotBoundException {
 		
 		Tree tree = createTree().getTree();
 		

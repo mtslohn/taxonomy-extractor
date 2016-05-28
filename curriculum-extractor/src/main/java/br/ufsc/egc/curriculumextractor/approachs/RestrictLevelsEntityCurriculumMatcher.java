@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,11 +9,12 @@ import java.util.Map;
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
+import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
 public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurriculumMatcher {
 
-	public ApproachResponse createTree() {
+	public ApproachResponse createTree() throws RemoteException {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -20,13 +23,13 @@ public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurricu
 		
 		List<String> entitiesList = new ArrayList<String>(entitiesCount.keySet());
 
-		DBPediaService dbPediaService = DBPediaService.getInstance();
+		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl.getInstance();
 		
 		Tree tree = new Tree();
 		
 		for (int index = 0; index < entitiesList.size(); index++) {
 			String entity = entitiesList.get(index);
-			List<String> results = dbPediaService.findBroaderConcepts(entity, 3);
+			List<String> results = dbPediaService.findBroaderConceptsARQ(entity, 3);
 			for (int innerIndex = 0; innerIndex < entitiesList.size(); innerIndex++) {
 				String innerEntity = entitiesList.get(innerIndex);
 				for (String result: results) {
@@ -41,7 +44,7 @@ public class RestrictLevelsEntityCurriculumMatcher extends AbstractEntityCurricu
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException, NotBoundException {
 		new RestrictLevelsEntityCurriculumMatcher().writeTree();
 	}
 

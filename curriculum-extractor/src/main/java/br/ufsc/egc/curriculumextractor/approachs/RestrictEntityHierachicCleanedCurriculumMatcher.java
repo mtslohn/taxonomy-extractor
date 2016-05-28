@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +10,8 @@ import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
+import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
 public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEntityCurriculumMatcher implements HierarchicApproach {
 
@@ -18,7 +21,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 		return LEVELS;
 	}
 
-	public ApproachResponse createTree() {
+	public ApproachResponse createTree() throws RemoteException {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -27,7 +30,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 		
 		List<String> entitiesList = new ArrayList<String>(entitiesCount.keySet());
 
-		DBPediaService dbPediaService = DBPediaService.getInstance();
+		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl.getInstance();
 		
 		Tree tree = new Tree();
 		
@@ -60,7 +63,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 		addToTree(tree, fatherTerm.getLabel(), sonLabel);
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException, NotBoundException {
 		new RestrictEntityHierachicCleanedCurriculumMatcher().writeTree();		
 	}
 

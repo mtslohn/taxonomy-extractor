@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import java.rmi.RemoteException;
+
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
@@ -11,7 +13,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcherWithJoin implements 
 		return approach.getLevels();
 	}
 
-	public void process() {
+	public void process() throws RemoteException {
 		
 		RestrictEntityHierachicCleanedCurriculumMatcher approach = new RestrictEntityHierachicCleanedCurriculumMatcher();
 		
@@ -24,7 +26,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcherWithJoin implements 
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException {
 		new RestrictEntityHierachicCleanedCurriculumMatcherWithJoin().process();
 	}
 

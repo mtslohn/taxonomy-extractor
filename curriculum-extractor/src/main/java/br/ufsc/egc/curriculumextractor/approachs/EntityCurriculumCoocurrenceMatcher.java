@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +15,8 @@ import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.curriculumextractor.util.TreeWriter;
-import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
+import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
 public class EntityCurriculumCoocurrenceMatcher extends
 		AbstractEntityCurriculumMatcher {
@@ -22,7 +24,7 @@ public class EntityCurriculumCoocurrenceMatcher extends
 	private static final Logger LOGGER = Logger
 			.getLogger(EntityCurriculumCoocurrenceMatcher.class);
 
-	public ApproachResponse createTree() {
+	public ApproachResponse createTree() throws RemoteException {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -86,7 +88,7 @@ public class EntityCurriculumCoocurrenceMatcher extends
 		// a arvore
 		// TODO colocar na tree as relacoes descobertas e validadas na DBPedia
 
-		DBPediaService dbPediaService = DBPediaService.getInstance();
+		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl.getInstance();
 
 		Tree tree = new Tree();
 
@@ -107,7 +109,7 @@ public class EntityCurriculumCoocurrenceMatcher extends
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException, NotBoundException {
 		new EntityCurriculumCoocurrenceMatcher().writeTree();
 	}
 

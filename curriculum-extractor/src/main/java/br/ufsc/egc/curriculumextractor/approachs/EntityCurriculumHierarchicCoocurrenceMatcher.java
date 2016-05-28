@@ -1,9 +1,10 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -15,7 +16,8 @@ import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
+import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
 public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		AbstractEntityCurriculumMatcher implements HierarchicApproach {
@@ -23,13 +25,13 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 	private static final Logger LOGGER = Logger
 			.getLogger(EntityCurriculumHierarchicCoocurrenceMatcher.class);
 	
-	private static final int LEVELS = 2;
+	private static final int LEVELS = 1;
 	
 	public int getLevels() {
 		return LEVELS;
 	}
 
-	public ApproachResponse createTree() {
+	public ApproachResponse createTree() throws RemoteException {
 
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
@@ -93,7 +95,7 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		// a arvore
 		// TODO colocar na tree as relacoes descobertas e validadas na DBPedia
 
-		DBPediaService dbPediaService = DBPediaService.getInstance();
+		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl.getInstance();
 
 		Tree tree = new Tree();
 		
@@ -112,8 +114,8 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		
 	}
 
-	private void findAndAddHierarchy(DBPediaService dbPediaService, Tree tree,
-			String sonLabel, String fatherLabel) {
+	private void findAndAddHierarchy(DBPediaServiceInterface dbPediaService, Tree tree,
+			String sonLabel, String fatherLabel) throws RemoteException {
 		Term hierarchy = dbPediaService
 				.findTree(sonLabel, LEVELS);
 		if (hierarchy != null) {
@@ -134,7 +136,7 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		addToTree(tree, fatherTerm.getLabel(), sonLabel);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException, NotBoundException {
 		new EntityCurriculumHierarchicCoocurrenceMatcher().writeTree();
 	}
 
