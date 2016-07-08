@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.util;
 
+import java.util.Set;
+
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 
@@ -13,15 +15,25 @@ public class TreeMetrics {
 	private double densityAvg;
 	private double termLevelAvg;
 	private int termLevelSum = 0;
+	private Set<String> cyclicWords;
+	private int cyclicWordsNumber;
+	private double cyclicWordsFactor;
+	private double horizontality;
+	private double verticality;
 
-	public TreeMetrics(Tree tree) {
+	public TreeMetrics(Tree tree, Set<String> cyclicWords) {
+		this.cyclicWords = cyclicWords;
 		calculateSums(tree);
 		calculateStatistics();
 	}
 
 	private void calculateStatistics() {
-		expansionFactorAvg = expansionSum/(double)expansions;
-		termLevelAvg = termLevelSum/(double)nodeCount;
+		expansionFactorAvg = expansionSum / (double) expansions;
+		termLevelAvg = termLevelSum / (double) nodeCount;
+		cyclicWordsNumber = cyclicWords.size();
+		cyclicWordsFactor = cyclicWordsNumber / (nodeCount * 1.0);
+		horizontality = maxLevel / (nodeCount * 1.0);
+		verticality = nodeCount / (maxLevel * 1.0);
 	}
 
 	private void calculateSums(Tree tree) {
@@ -68,16 +80,23 @@ public class TreeMetrics {
 	public double getDensityAvg() {
 		return densityAvg;
 	}
-	
+
 	public double getTermLevelAvg() {
 		return termLevelAvg;
 	}
 
 	public String print() {
-		return "nodeCount=" + nodeCount + "\nmaxLevel=" + maxLevel
-				+ "\nexpansions=" + expansions + "\nexpansionSum="
-				+ expansionSum + "\nexpansionFactorAvg=" + expansionFactorAvg
-				+ "\ndensityAvg=" + densityAvg + "\ntermLevelAvg=" + termLevelAvg;
+		return "nodeCount=" + nodeCount 
+				+ "\nmaxLevel=" + maxLevel 
+				+ "\nexpansions=" + expansions 
+				+ "\nexpansionSum=" + expansionSum 
+				+ "\nexpansionFactorAvg=" + expansionFactorAvg
+				+ "\ndensityAvg=" + densityAvg
+				+ "\ntermLevelAvg=" + termLevelAvg 
+				+ "\ncyclicWordsNumber=" + cyclicWordsNumber 
+				+ "\ncyclicWordsFactor=" + cyclicWordsFactor 
+				+ "\nhorizontality=" + horizontality 
+				+ "\nverticality=" + verticality;
 	}
 
 }

@@ -17,6 +17,12 @@ import opennlp.tools.util.Span;
 public class EntityExtractor {
 
 	private static final String NER_MODEL_FILE = "corpus/pt-ner.bin";
+	
+	private int numberOfTokens;
+	
+	public int getNumberOfTokens() {
+		return numberOfTokens;
+	}
 
 	public void process() {
 
@@ -76,6 +82,7 @@ public class EntityExtractor {
 
 			TokenSpan sentenceSpan = new TokenSpan();
 			sentenceSpan.tokens = clearString(builder.toString()).split(" ");
+			numberOfTokens = sentenceSpan.tokens.length;
 			sentenceSpan.spans = nameFinderME.find(sentenceSpan.tokens);
 			return sentenceSpan;
 		} finally {

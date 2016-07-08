@@ -9,15 +9,17 @@ import br.ufsc.egc.curriculumextractor.approachs.RestrictEntityHierachicCurricul
 
 public class ApproachBatchExecutor {
 	
+	private static final int LEVELS_MAX = 3;
+	private static final int ENTITY_THRESHOLD_MAX = 3;
 	private static final Logger LOGGER = Logger.getLogger(ApproachBatchExecutor.class); 
 
 	public static void main(String[] args) throws RemoteException, NotBoundException {
 		
 		RestrictEntityHierachicCurriculumMatcher approach = new RestrictEntityHierachicCurriculumMatcher();
 		
-		for (int entityThreshold = 1; entityThreshold <= 10; entityThreshold++) {
+		for (int entityThreshold = 1; entityThreshold <= ENTITY_THRESHOLD_MAX; entityThreshold++) {
 			approach.setEntityThreshold(entityThreshold);
-			for (int levels = 1; levels <= 3; levels++) {
+			for (int levels = 1; levels <= LEVELS_MAX; levels++) {
 				approach.setLevels(levels);
 				LOGGER.info("Iniciando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
 				approach.writeTree();

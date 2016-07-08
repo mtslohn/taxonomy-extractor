@@ -10,8 +10,10 @@ import java.util.Map;
 
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
+import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+import br.ufsc.egc.curriculumextractor.util.NERMetrics;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
@@ -58,17 +60,17 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 
 		entitiesCount = getFilteredMap(entitiesCount, getEntityThreshold());
 
-		List<String> entitiesList = new ArrayList<String>(entitiesCount.keySet());
+		List<String> entities = new ArrayList<String>(entitiesCount.keySet());
 
 		Tree tree = new Tree();
 
 		DBPediaServiceInterface dbPedia = getDBPedia();
 
-		for (int index = 0; index < entitiesList.size(); index++) {
-			String entity = entitiesList.get(index);
+		for (int index = 0; index < entities.size(); index++) {
+			String entity = entities.get(index);
 			Term hierarchy = dbPedia.findTree(entity, getLevels());
-			for (int innerIndex = 0; innerIndex < entitiesList.size(); innerIndex++) {
-				String innerEntity = entitiesList.get(innerIndex);
+			for (int innerIndex = 0; innerIndex < entities.size(); innerIndex++) {
+				String innerEntity = entities.get(innerIndex);
 				Term result = hierarchy.find(innerEntity, true);
 				if (result != null) {
 					addHierarchy(tree, entity, result);
@@ -76,8 +78,9 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 			}
 		}
 
-		return new ApproachResponse(tree, entitiesList);
-
+		TokenStatistics statistics = countUsedTokens(tree);
+		NERMetrics nerMetrics = new NERMetrics(improver.getNumberOfTokens(), improver.getRecognizedTokens(), statistics.getUsedTokens());
+		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 	}
 
 	private DBPediaServiceInterface getDBPedia() throws RemoteException, NotBoundException {

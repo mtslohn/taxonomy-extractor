@@ -2,6 +2,7 @@ package br.ufsc.egc.curriculumextractor.approachs;
 
 import java.rmi.RemoteException;
 
+import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
@@ -17,12 +18,13 @@ public class RestrictEntityHierachicCleanedCurriculumMatcherWithJoin implements 
 		
 		RestrictEntityHierachicCleanedCurriculumMatcher approach = new RestrictEntityHierachicCleanedCurriculumMatcher();
 		
-		Tree tree = approach.createTree().getTree();
+		ApproachResponse approachResponse = approach.createTree();
+		Tree tree = approachResponse.getTree();
 		
 		tree.join();
 		
 		TreeWriter treeWriter = new TreeWriter();
-		treeWriter.write(getClass().getSimpleName(), tree);
+		treeWriter.write(getClass().getSimpleName(), approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(),tree);
 		
 	}
 	
