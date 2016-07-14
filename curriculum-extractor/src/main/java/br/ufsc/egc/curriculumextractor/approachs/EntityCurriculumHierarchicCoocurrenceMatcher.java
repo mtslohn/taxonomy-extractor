@@ -22,13 +22,33 @@ import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		AbstractEntityCurriculumMatcher implements HierarchicApproach {
 
+	private static final int DEFAULT_LEVELS = 1;
+
 	private static final Logger LOGGER = Logger
 			.getLogger(EntityCurriculumHierarchicCoocurrenceMatcher.class);
-	
-	private static final int LEVELS = 1;
-	
+
+	private int entityThreshold;
+	private int levels;
+
+	public EntityCurriculumHierarchicCoocurrenceMatcher() {
+		setLevels(DEFAULT_LEVELS);
+		setEntityThreshold(1);
+	}
+
+	public int getEntityThreshold() {
+		return entityThreshold;
+	}
+
+	public void setEntityThreshold(int entityThreshold) {
+		this.entityThreshold = entityThreshold;
+	}
+
 	public int getLevels() {
-		return LEVELS;
+		return levels;
+	}
+
+	public void setLevels(int levels) {
+		this.levels = levels;
 	}
 
 	public ApproachResponse createTree() throws RemoteException {
@@ -36,7 +56,7 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
 
-		entitiesCount = getFilteredMap(entitiesCount);
+		entitiesCount = getFilteredMap(entitiesCount, getEntityThreshold());
 
 		CurriculumListReader curriculumListReader = new CurriculumListReader();
 
@@ -95,29 +115,34 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		// a arvore
 		// TODO colocar na tree as relacoes descobertas e validadas na DBPedia
 
-		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl.getInstance();
+		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl
+				.getInstance();
 
 		Tree tree = new Tree();
-		
-		List<EntityPair> keyList = new ArrayList<EntityPair>(manager.getPairsCoocurrence().keySet());
-		
+
+		List<EntityPair> keyList = new ArrayList<EntityPair>(manager
+				.getPairsCoocurrence().keySet());
+
 		for (int index = 0; index < keyList.size(); index++) {
 			if (index % 1000 == 0) {
-				LOGGER.info("Procurando hierarquias para o par " + index + "/" + keyList.size());
+				LOGGER.info("Procurando hierarquias para o par " + index + "/"
+						+ keyList.size());
 			}
 			EntityPair pair = keyList.get(index);
-			findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(), pair.getEntity2());
-			findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(), pair.getEntity1());
+			findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(),
+					pair.getEntity2());
+			findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(),
+					pair.getEntity1());
 		}
-		
+
 		return new ApproachResponse(tree, entities);
-		
+
 	}
 
-	private void findAndAddHierarchy(DBPediaServiceInterface dbPediaService, Tree tree,
-			String sonLabel, String fatherLabel) throws RemoteException {
-		Term hierarchy = dbPediaService
-				.findTree(sonLabel, LEVELS);
+	private void findAndAddHierarchy(DBPediaServiceInterface dbPediaService,
+			Tree tree, String sonLabel, String fatherLabel)
+			throws RemoteException {
+		Term hierarchy = dbPediaService.findTree(sonLabel, getLevels());
 		if (hierarchy != null) {
 			Term result = hierarchy.find(fatherLabel, true);
 			if (result != null) {
@@ -125,7 +150,6 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 			}
 		}
 	}
-
 
 	private void addHierarchy(Tree tree, String sonLabel, Term fatherTerm) {
 		while (fatherTerm.getParent() != null) {
@@ -136,7 +160,8 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		addToTree(tree, fatherTerm.getLabel(), sonLabel);
 	}
 
-	public static void main(String[] args) throws RemoteException, NotBoundException {
+	public static void main(String[] args) throws RemoteException,
+			NotBoundException {
 		new EntityCurriculumHierarchicCoocurrenceMatcher().writeTree();
 	}
 

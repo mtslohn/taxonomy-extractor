@@ -4,8 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
+import br.ufsc.egc.curriculumextractor.EntityExtractorTest;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.util.Span;
@@ -16,6 +21,8 @@ import opennlp.tools.util.Span;
  */
 public class EntityExtractor {
 
+	private final static Logger LOGGER = Logger.getLogger(EntityExtractorTest.class);
+	
 	private static final String NER_MODEL_FILE = "corpus/pt-ner.bin";
 
 	public void process() {
@@ -35,8 +42,8 @@ public class EntityExtractor {
 
 					String result = spanBuilder.toString();
 					if (isValidString(result)) {
-						System.out.println(span.toString());
-						System.out.println(result);
+//						System.out.println(span.toString());
+//						System.out.println(result);
 					}
 				}
 			}
@@ -89,6 +96,47 @@ public class EntityExtractor {
 			}
 		}
 	}
+	
+	public List<TokenSpan> getEntitiesReloaded() throws IOException {
+
+		BufferedReader reader = null;
+		try {
+			TokenNameFinderModel model = new TokenNameFinderModel(new File(
+					NER_MODEL_FILE));
+			NameFinderME nameFinderME = new NameFinderME(model);
+			reader = new BufferedReader(new FileReader(CurriculumListReader.CURRICULUM_LIST_TXT));
+			
+			List<TokenSpan> sentenceSpans = new ArrayList<TokenSpan>();
+			
+			String line = reader.readLine();
+			
+			int logIterator = 0;
+			
+			while (line != null) {
+				logIterator++;
+				line = line.replaceAll("\\(|\\)|\\,|\\.|\\;", "");
+				TokenSpan sentenceSpan = new TokenSpan();
+				sentenceSpan.tokens = clearString(line).split(" ");
+				sentenceSpan.spans = nameFinderME.find(sentenceSpan.tokens);
+				sentenceSpans.add(sentenceSpan);
+				if (logIterator % 1000 == 0) {
+					LOGGER.debug("Iterando sobre a instância de número " + logIterator);
+				}
+				line = reader.readLine();
+			}
+
+			return sentenceSpans;
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	public static void main(String[] args) {
 		new EntityExtractor().process();
@@ -96,8 +144,8 @@ public class EntityExtractor {
 
 	public static class TokenSpan {
 
-		String[] tokens;
-		Span[] spans;
+		public String[] tokens;
+		public Span[] spans;
 
 	}
 

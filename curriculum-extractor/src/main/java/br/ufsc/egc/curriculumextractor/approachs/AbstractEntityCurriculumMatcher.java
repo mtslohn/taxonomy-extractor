@@ -84,8 +84,10 @@ public abstract class AbstractEntityCurriculumMatcher {
 		if (this instanceof RestrictEntityHierachicCurriculumMatcher) {
 			RestrictEntityHierachicCurriculumMatcher thisApproach = (RestrictEntityHierachicCurriculumMatcher) this;
 			fileName = String.format("Frequencia absoluta - %s entityThreshold - %s levels", thisApproach.getEntityThreshold(), thisApproach.getLevels());
-		}
-		treeWriter.write(fileName, tree);
+		} else 		if (this instanceof EntityCurriculumHierarchicCoocurrenceMatcher) {
+			EntityCurriculumHierarchicCoocurrenceMatcher thisApproach = (EntityCurriculumHierarchicCoocurrenceMatcher) this;
+			fileName = String.format("Coocorrencia - %s entityThreshold - %s levels", thisApproach.getEntityThreshold(), thisApproach.getLevels());
+		}		treeWriter.write(fileName, tree);
 		
 	}
 	
