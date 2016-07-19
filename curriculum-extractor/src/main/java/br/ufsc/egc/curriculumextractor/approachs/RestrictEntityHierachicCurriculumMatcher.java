@@ -10,8 +10,11 @@ import java.util.Map;
 
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
+import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+import br.ufsc.egc.curriculumextractor.util.NERMetrics;
+import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
@@ -50,25 +53,29 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 	public int getEntityThreshold() {
 		return entityThreshold;
 	}
-
+	
 	public ApproachResponse createTree() throws RemoteException, NotBoundException {
-
 		EntityImprover improver = new EntityImprover();
 		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
 
 		entitiesCount = getFilteredMap(entitiesCount, getEntityThreshold());
 
-		List<String> entitiesList = new ArrayList<String>(entitiesCount.keySet());
+		List<String> entities = new ArrayList<String>(entitiesCount.keySet());
+		
+		return createTree(entities, improver.getNumberOfTokens(), improver.getRecognizedTokens());
+	}
+
+	public ApproachResponse createTree(List<String> entities, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
 
 		Tree tree = new Tree();
 
 		DBPediaServiceInterface dbPedia = getDBPedia();
 
-		for (int index = 0; index < entitiesList.size(); index++) {
-			String entity = entitiesList.get(index);
+		for (int index = 0; index < entities.size(); index++) {
+			String entity = entities.get(index);
 			Term hierarchy = dbPedia.findTree(entity, getLevels());
-			for (int innerIndex = 0; innerIndex < entitiesList.size(); innerIndex++) {
-				String innerEntity = entitiesList.get(innerIndex);
+			for (int innerIndex = 0; innerIndex < entities.size(); innerIndex++) {
+				String innerEntity = entities.get(innerIndex);
 				Term result = hierarchy.find(innerEntity, true);
 				if (result != null) {
 					addHierarchy(tree, entity, result);
@@ -76,8 +83,11 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 			}
 		}
 
-		return new ApproachResponse(tree, entitiesList);
-
+		// TODO fazer com que esse método multiplique também pelo total
+		// de tokens encontrados no map de entidades
+		TokenStatistics statistics = countUsedTokens(tree);
+		NERMetrics nerMetrics = new NERMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens());
+		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 	}
 
 	private DBPediaServiceInterface getDBPedia() throws RemoteException, NotBoundException {
@@ -100,6 +110,21 @@ public class RestrictEntityHierachicCurriculumMatcher extends AbstractEntityCurr
 
 	public static void main(String[] args) throws RemoteException, NotBoundException {
 		new RestrictEntityHierachicCurriculumMatcher().writeTree();
+	}
+
+	@Override
+	public void writeTree(List<String> entities, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
+		ApproachResponse approachResponse = createTree(entities, numberOfTokens, recognizedTokens);
+		Tree tree = approachResponse.getTree();
+		
+		TreeWriter treeWriter = new TreeWriter();
+		String fileName = getClass().getSimpleName();
+		if (this instanceof RestrictEntityHierachicCurriculumMatcher) {
+			RestrictEntityHierachicCurriculumMatcher thisApproach = (RestrictEntityHierachicCurriculumMatcher) this;
+			fileName = String.format("Frequencia absoluta - %s entityThreshold - %s levels", thisApproach.getEntityThreshold(), thisApproach.getLevels());
+		}
+		
+		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(), tree);
 	}
 
 }

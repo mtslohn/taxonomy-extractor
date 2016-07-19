@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Set;
 
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 
@@ -15,7 +16,7 @@ public class TreeWriter {
 	private static final String FILE_NAME_TEMPLATE = "results/%s-%s.txt";
 	private static final String DATE_FORMAT = "yyyy-MM-dd.HH.mm.ss";
 
-	public void write(String strategyName, Tree tree) {
+	public void write(String strategyName, NERMetrics nerMetrics, Set<String> cyclicWords, Tree tree) {
 
 		File file = new File(createFileName(strategyName));
 
@@ -28,8 +29,10 @@ public class TreeWriter {
 			fileWriter = new FileWriter(file);
 			buffWriter = new BufferedWriter(fileWriter);
 			
-			TreeMetrics metrics = new TreeMetrics(tree);
+			TreeMetrics metrics = new TreeMetrics(tree, cyclicWords);
 
+			buffWriter.write(nerMetrics.print());
+			buffWriter.write(SPACER);
 			buffWriter.write(metrics.print());
 			buffWriter.write(SPACER);
 			buffWriter.write(tree.print());

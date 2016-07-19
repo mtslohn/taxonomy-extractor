@@ -17,13 +17,20 @@ import org.apache.lucene.analysis.util.CharArraySet;
 public class EntityImprover {
 
 	Map<String, Integer> entitiesCount = new HashMap<String, Integer>();
+	
+	private int numberOfTokens;
+	private int recognizedTokens;
 
 	public Map<String, Integer> getSortedEntitiesMap() {
 
+		// recupera o set de stop words padrao do Lucene
 		CharArraySet stopSet = PortugueseAnalyzer.getDefaultStopSet();
 
 		try {
 			EntityExtractor.TokenSpan sentenceSpan = new EntityExtractor().getEntities();
+			
+			numberOfTokens = sentenceSpan.tokens.length;
+			recognizedTokens = 0;
 
 			for (Span span : sentenceSpan.spans) {
 				if (!span.getType().equals("time")
@@ -37,6 +44,7 @@ public class EntityImprover {
 								continue; // nao concatena
 							}
 						}
+						recognizedTokens++;
 						spanBuilder.append(term);
 						if (index < span.getEnd() - 1) {
 							spanBuilder.append(" ");
@@ -86,6 +94,14 @@ public class EntityImprover {
 			result.put(entry.getKey(), entry.getValue());
 		}
 		return result;
+	}
+	
+	public int getNumberOfTokens() {
+		return numberOfTokens;
+	}
+	
+	public int getRecognizedTokens() {
+		return recognizedTokens;
 	}
 
 }

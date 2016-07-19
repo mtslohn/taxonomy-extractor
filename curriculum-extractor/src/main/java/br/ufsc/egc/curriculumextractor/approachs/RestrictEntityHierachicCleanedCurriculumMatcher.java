@@ -8,8 +8,10 @@ import java.util.Map;
 
 import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
+import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+import br.ufsc.egc.curriculumextractor.util.NERMetrics;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
@@ -28,17 +30,17 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 
 		entitiesCount = getFilteredMap(entitiesCount);
 		
-		List<String> entitiesList = new ArrayList<String>(entitiesCount.keySet());
+		List<String> entities = new ArrayList<String>(entitiesCount.keySet());
 
 		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl.getInstance();
 		
 		Tree tree = new Tree();
 		
-		for (int index = 0; index < entitiesList.size(); index++) {
-			String entity = entitiesList.get(index);
+		for (int index = 0; index < entities.size(); index++) {
+			String entity = entities.get(index);
 			Term hierarchy = dbPediaService.findTree(entity, LEVELS);
-			for (int innerIndex = 0; innerIndex < entitiesList.size(); innerIndex++) {
-				String innerEntity = entitiesList.get(innerIndex);
+			for (int innerIndex = 0; innerIndex < entities.size(); innerIndex++) {
+				String innerEntity = entities.get(innerIndex);
 				Term result = hierarchy.find(innerEntity, true);
 				if (result != null) {
 					addHierarchy(tree, entity, result);
@@ -48,9 +50,11 @@ public class RestrictEntityHierachicCleanedCurriculumMatcher extends AbstractEnt
 		}
 		
 		// limpeza da arvore
-		Tree newTree = tree.clean(entitiesList);
+		Tree newTree = tree.clean(entities);
 		
-		return new ApproachResponse(newTree, entitiesList);
+		TokenStatistics statistics = countUsedTokens(tree);
+		NERMetrics nerMetrics = new NERMetrics(improver.getNumberOfTokens(), improver.getRecognizedTokens(), statistics.getUsedTokens());
+		return new ApproachResponse(newTree, entities, nerMetrics, statistics.getCyclicWords());
 		
 		
 	}

@@ -14,8 +14,10 @@ import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
+import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+import br.ufsc.egc.curriculumextractor.util.NERMetrics;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 
@@ -135,7 +137,9 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 					pair.getEntity1());
 		}
 
-		return new ApproachResponse(tree, entities);
+		TokenStatistics statistics = countUsedTokens(tree);
+		NERMetrics nerMetrics = new NERMetrics(improver.getNumberOfTokens(), improver.getRecognizedTokens(), statistics.getUsedTokens());
+		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 
 	}
 
