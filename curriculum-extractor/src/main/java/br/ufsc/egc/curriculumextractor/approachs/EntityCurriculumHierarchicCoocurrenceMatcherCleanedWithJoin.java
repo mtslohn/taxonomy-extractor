@@ -8,7 +8,7 @@ import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
 public class EntityCurriculumHierarchicCoocurrenceMatcherCleanedWithJoin implements HierarchicApproach {
 	
-	EntityCurriculumHierarchicCoocurrenceMatcher approach = new EntityCurriculumHierarchicCoocurrenceMatcher();
+	EntityCurriculumCoocurrenceHierarchicMatcher approach = new EntityCurriculumCoocurrenceHierarchicMatcher();
 	
 	public int getLevels() {
 		return approach.getLevels(); 

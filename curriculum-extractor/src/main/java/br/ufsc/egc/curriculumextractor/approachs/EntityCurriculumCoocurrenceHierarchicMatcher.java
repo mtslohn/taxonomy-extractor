@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
-import br.ufsc.egc.curriculumextractor.core.EntityImprover;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
@@ -18,31 +17,26 @@ import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.NERMetrics;
+import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
+import gnu.trove.map.TObjectIntMap;
 
-public class EntityCurriculumHierarchicCoocurrenceMatcher extends
+public class EntityCurriculumCoocurrenceHierarchicMatcher extends
 		AbstractEntityCurriculumMatcher implements HierarchicApproach {
 
 	private static final int DEFAULT_LEVELS = 1;
 
 	private static final Logger LOGGER = Logger
-			.getLogger(EntityCurriculumHierarchicCoocurrenceMatcher.class);
+			.getLogger(EntityCurriculumCoocurrenceHierarchicMatcher.class);
 
-	private int entityThreshold;
 	private int levels;
+	private Map<Integer, String> curriculumMap;
 
-	public EntityCurriculumHierarchicCoocurrenceMatcher() {
+	public EntityCurriculumCoocurrenceHierarchicMatcher(int lineLimit) {
 		setLevels(DEFAULT_LEVELS);
-		setEntityThreshold(1);
-	}
-
-	public int getEntityThreshold() {
-		return entityThreshold;
-	}
-
-	public void setEntityThreshold(int entityThreshold) {
-		this.entityThreshold = entityThreshold;
+		CurriculumListReader curriculumListReader = new CurriculumListReader();
+		curriculumMap = curriculumListReader.read(lineLimit);
 	}
 
 	public int getLevels() {
@@ -52,53 +46,38 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 	public void setLevels(int levels) {
 		this.levels = levels;
 	}
+	public ApproachResponse createTree() {
+		throw new RuntimeException("Não suportado!!!");
+	}
 
-	public ApproachResponse createTree() throws RemoteException {
+	public ApproachResponse createTree(TObjectIntMap<String> entitiesAndCount, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
 
-		EntityImprover improver = new EntityImprover();
-		Map<String, Integer> entitiesCount = improver.getSortedEntitiesMap();
-
-		entitiesCount = getFilteredMap(entitiesCount, getEntityThreshold());
-
-		CurriculumListReader curriculumListReader = new CurriculumListReader();
-
-		Map<Integer, String> curriculumMap = curriculumListReader.read();
-		List<String> entities = new ArrayList<String>(entitiesCount.keySet());
+		List<String> entities = new ArrayList<String>(entitiesAndCount.keySet());
 
 		List<CurriculumCorrelation> correlations = new ArrayList<CurriculumCorrelation>();
 
 		for (Integer curriculumKey : curriculumMap.keySet()) {
-
 			String curriculum = curriculumMap.get(curriculumKey);
-
 			for (int indexOuter = 0; indexOuter < entities.size(); indexOuter++) {
-
 				String entityOuter = entities.get(indexOuter);
-
 				if (curriculum.contains(entityOuter)) {
-
 					for (int indexInner = indexOuter + 1; indexInner < entities
 							.size(); indexInner++) {
 						String entityInner = entities.get(indexInner);
 						CurriculumCorrelation correlation = new CurriculumCorrelation();
 						correlation.setCurriculumId(curriculumKey);
-
 						if (curriculum.contains(entityInner)) {
 							EntityPair pair = new EntityPair();
 							pair.setEntity1(entityOuter);
 							pair.setEntity2(entityInner);
 							correlation.getPairs().add(pair);
 						}
-
 						if (!correlation.getPairs().isEmpty()) {
 							correlations.add(correlation);
 						}
-
 					}
 				}
-
 			}
-
 		}
 
 		EntityPairCoocurrenceManager manager = new EntityPairCoocurrenceManager();
@@ -136,19 +115,11 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 			findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(),
 					pair.getEntity1());
 		}
-<<<<<<< HEAD
 
-		TokenStatistics statistics = countUsedTokens(tree);
-		NERMetrics nerMetrics = new NERMetrics(improver.getNumberOfTokens(), improver.getRecognizedTokens(), statistics.getUsedTokens());
+		TokenStatistics statistics = countUsedTokens(tree, entitiesAndCount);
+		NERMetrics nerMetrics = new NERMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens());
 		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 
-=======
-		
-		TokenStatistics statistics = countUsedTokens(tree);
-		NERMetrics nerMetrics = new NERMetrics(improver.getNumberOfTokens(), improver.getRecognizedTokens(), statistics.getUsedTokens());
-		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
-		
->>>>>>> refs/remotes/origin/performance-correlation
 	}
 
 	private void findAndAddHierarchy(DBPediaServiceInterface dbPediaService,
@@ -172,9 +143,13 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 		addToTree(tree, fatherTerm.getLabel(), sonLabel);
 	}
 
-	public static void main(String[] args) throws RemoteException,
-			NotBoundException {
-		new EntityCurriculumHierarchicCoocurrenceMatcher().writeTree();
+	@Override
+	public void writeTree(int entityThreshold, TObjectIntMap<String> entitiesAndCount, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
+		ApproachResponse approachResponse = createTree(entitiesAndCount, numberOfTokens, recognizedTokens);
+		Tree tree = approachResponse.getTree();
+		TreeWriter treeWriter = new TreeWriter();
+		String fileName = String.format("Curriculum Coocurrence - %s entityThreshold - %s levels", entityThreshold, this.getLevels());
+		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(), tree);
 	}
 
 }

@@ -14,6 +14,7 @@ import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
+import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 public abstract class AbstractEntityCurriculumMatcher {
@@ -82,24 +83,14 @@ public abstract class AbstractEntityCurriculumMatcher {
 	
 	public void writeTree() throws RemoteException, NotBoundException {
 		
-		ApproachResponse approachResponse = createTree();
-		Tree tree = approachResponse.getTree();
-		
-		TreeWriter treeWriter = new TreeWriter();
-		String fileName = getClass().getSimpleName();
-		if (this instanceof RestrictEntityHierachicCurriculumMatcher) {
-			RestrictEntityHierachicCurriculumMatcher thisApproach = (RestrictEntityHierachicCurriculumMatcher) this;
-			fileName = String.format("Frequencia absoluta - %s entityThreshold - %s levels", thisApproach.getEntityThreshold(), thisApproach.getLevels());
-		}
-		
-		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(), tree);
+		throw new RuntimeException("Não suportado!!!");
 		
 	}
 	
-	protected TokenStatistics countUsedTokens(Tree tree) {
+	protected TokenStatistics countUsedTokens(Tree tree, TObjectIntMap<String> entitiesAndCount) {
 		TObjectIntHashMap<String> words = new TObjectIntHashMap<String>();
 		for (Term root: tree.getRoots()) {
-			createTokenStatistics(words, root);
+			createTokenStatistics(words, root, entitiesAndCount);
 		}
 
 		int count = 0;
@@ -117,10 +108,11 @@ public abstract class AbstractEntityCurriculumMatcher {
 
 	}
 
-	private void createTokenStatistics(TObjectIntHashMap<String> words, Term root) {
-		words.adjustOrPutValue(root.getLabel(), 1, 1);
+	private void createTokenStatistics(TObjectIntHashMap<String> words, Term root, TObjectIntMap<String> entitiesAndCount) {
+		int factor = entitiesAndCount.get(root.getLabel());
+		words.adjustOrPutValue(root.getLabel(), factor, factor);
 		for (Term son: root.getSons()) {
-			createTokenStatistics(words, son);
+			createTokenStatistics(words, son, entitiesAndCount);
 		}
 	}
 

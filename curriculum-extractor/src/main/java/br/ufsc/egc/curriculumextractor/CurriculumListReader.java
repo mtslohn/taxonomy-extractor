@@ -13,6 +13,10 @@ public class CurriculumListReader {
 	public static final String CURRICULUM_LIST_TXT = "curriculums/saida.txt";
 
 	public Map<Integer, String> read() {
+		return read(-1); 
+	}
+	
+	public Map<Integer, String> read(int readLinesLimit) {
 
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -27,7 +31,8 @@ public class CurriculumListReader {
 			
 			String line = bufferedReader.readLine();
 			int key = 0;
-			while (line != null) {
+			
+			while (line != null && (readLinesLimit < 0 || key < readLinesLimit)) {
 				
 				if (!line.startsWith("=")) {
 					curriculumMap.put(key, line);

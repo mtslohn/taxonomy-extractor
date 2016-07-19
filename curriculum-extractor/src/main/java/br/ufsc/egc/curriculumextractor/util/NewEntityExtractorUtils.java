@@ -1,20 +1,19 @@
 package br.ufsc.egc.curriculumextractor.util;
 
-import java.util.Set;
-
 import gnu.trove.map.TObjectIntMap;
-import gnu.trove.set.hash.THashSet;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 public class NewEntityExtractorUtils {
 	
-	public static Set<String> filterByEntityThreshold(TObjectIntMap<String> entitiesAndCount, int entityThreshold) {
-		Set<String> entitiesSet = new THashSet<String>();
+	public static TObjectIntMap<String> filterByEntityThreshold(TObjectIntMap<String> entitiesAndCount, int entityThreshold) {
+		TObjectIntMap<String> filteredMap = new TObjectIntHashMap<String>();
 		for (String entity: entitiesAndCount.keySet()) {
-			if (entitiesAndCount.get(entity) >= entityThreshold) {
-				entitiesSet.add(entity);
+			int count = entitiesAndCount.get(entity);
+			if (count >= entityThreshold) {
+				filteredMap.put(entity, count);
 			}
 		}
-		return entitiesSet;
+		return filteredMap;
 	}
 
 }
