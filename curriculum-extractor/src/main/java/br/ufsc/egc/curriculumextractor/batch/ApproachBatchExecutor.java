@@ -5,43 +5,25 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
-import br.ufsc.egc.curriculumextractor.approachs.EntityCurriculumHierarchicCoocurrenceMatcher;
 import br.ufsc.egc.curriculumextractor.approachs.RestrictEntityHierachicCurriculumMatcher;
 
 public class ApproachBatchExecutor {
+	
+	private static final int LEVELS_MAX = 3;
+	private static final int ENTITY_THRESHOLD_MAX = 3;
+	private static final Logger LOGGER = Logger.getLogger(ApproachBatchExecutor.class); 
 
-	private static final Logger LOGGER = Logger
-			.getLogger(ApproachBatchExecutor.class);
-
-	public static void main(String[] args) throws RemoteException,
-			NotBoundException {
-
-//		{
-//			RestrictEntityHierachicCurriculumMatcher approach = new RestrictEntityHierachicCurriculumMatcher();
-//			for (int entityThreshold = 1; entityThreshold <= 10; entityThreshold++) {
-//				approach.setEntityThreshold(entityThreshold);
-//				for (int levels = 1; levels <= 3; levels++) {
-//					approach.setLevels(levels);
-//					LOGGER.info("Iniciando execução com entityThreshold de "
-//							+ entityThreshold + " e levels de " + levels + ".");
-//					approach.writeTree();
-//					LOGGER.info("Terminando execução com entityThreshold de "
-//							+ entityThreshold + " e levels de " + levels + ".");
-//				}
-//			}
-//		}
-		{
-			EntityCurriculumHierarchicCoocurrenceMatcher approachCoocurrence = new EntityCurriculumHierarchicCoocurrenceMatcher();
-			for (int entityThreshold = 1; entityThreshold <= 10; entityThreshold++) {
-				approachCoocurrence.setEntityThreshold(entityThreshold);
-				for (int levels = 1; levels <= 3; levels++) {
-					approachCoocurrence.setLevels(levels);
-					LOGGER.info("Iniciando execução com entityThreshold de "
-							+ entityThreshold + " e levels de " + levels + ".");
-					approachCoocurrence.writeTree();
-					LOGGER.info("Terminando execução com entityThreshold de "
-							+ entityThreshold + " e levels de " + levels + ".");
-				}
+	public static void main(String[] args) throws RemoteException, NotBoundException {
+		
+		RestrictEntityHierachicCurriculumMatcher approach = new RestrictEntityHierachicCurriculumMatcher();
+		
+		for (int entityThreshold = 1; entityThreshold <= ENTITY_THRESHOLD_MAX; entityThreshold++) {
+			approach.setEntityThreshold(entityThreshold);
+			for (int levels = 1; levels <= LEVELS_MAX; levels++) {
+				approach.setLevels(levels);
+				LOGGER.info("Iniciando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
+				approach.writeTree();
+				LOGGER.info("Terminando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
 			}
 		}
 

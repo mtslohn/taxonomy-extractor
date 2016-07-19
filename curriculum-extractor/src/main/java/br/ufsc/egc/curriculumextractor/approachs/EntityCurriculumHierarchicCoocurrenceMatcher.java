@@ -136,11 +136,19 @@ public class EntityCurriculumHierarchicCoocurrenceMatcher extends
 			findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(),
 					pair.getEntity1());
 		}
+<<<<<<< HEAD
 
 		TokenStatistics statistics = countUsedTokens(tree);
 		NERMetrics nerMetrics = new NERMetrics(improver.getNumberOfTokens(), improver.getRecognizedTokens(), statistics.getUsedTokens());
 		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 
+=======
+		
+		TokenStatistics statistics = countUsedTokens(tree);
+		NERMetrics nerMetrics = new NERMetrics(improver.getNumberOfTokens(), improver.getRecognizedTokens(), statistics.getUsedTokens());
+		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
+		
+>>>>>>> refs/remotes/origin/performance-correlation
 	}
 
 	private void findAndAddHierarchy(DBPediaServiceInterface dbPediaService,
