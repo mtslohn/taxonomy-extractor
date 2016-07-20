@@ -2,14 +2,14 @@ package br.ufsc.egc.curriculumextractor.approachs;
 
 import java.rmi.RemoteException;
 
-import br.ufsc.egc.curriculumextractor.approachs.selected.EntityCurriculumCoocurrenceHierarchicMatcher;
+import br.ufsc.egc.curriculumextractor.approachs.selected.CurriculumCoocurrenceMatcher;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
 public class EntityCurriculumHierarchicCoocurrenceMatcherCleanedWithJoin implements HierarchicApproach {
 	
-	EntityCurriculumCoocurrenceHierarchicMatcher approach = new EntityCurriculumCoocurrenceHierarchicMatcher();
+	CurriculumCoocurrenceMatcher approach = new CurriculumCoocurrenceMatcher();
 	
 	public int getLevels() {
 		return approach.getLevels(); 

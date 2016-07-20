@@ -5,14 +5,14 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
-import br.ufsc.egc.curriculumextractor.approachs.selected.EntityCurriculumCoocurrenceHierarchicMatcher;
+import br.ufsc.egc.curriculumextractor.approachs.selected.CurriculumCoocurrenceMatcher;
 import br.ufsc.egc.curriculumextractor.core.NewEntityExtractor;
 import br.ufsc.egc.curriculumextractor.util.NewEntityExtractorUtils;
 import gnu.trove.map.TObjectIntMap;
 
 public class NewApproachBatchExecutor {
 	
-	private static final int READ_LINES_LIMIT = 3000;
+	private static final int READ_LINES_LIMIT = 6000;
 	private static final int LEVELS_MAX = 3;
 	private static final int ENTITY_THRESHOLD_MIN = 50;
 	private static final int ENTITY_THRESHOLD_MAX = 100;
@@ -26,7 +26,7 @@ public class NewApproachBatchExecutor {
 		
 		TObjectIntMap<String> entitiesAndCount = nee.recognizeAndExtract(READ_LINES_LIMIT);
 		
-		EntityCurriculumCoocurrenceHierarchicMatcher approach = new EntityCurriculumCoocurrenceHierarchicMatcher(READ_LINES_LIMIT);
+		CurriculumCoocurrenceMatcher approach = new CurriculumCoocurrenceMatcher(READ_LINES_LIMIT);
 		
 		for (int entityThreshold = ENTITY_THRESHOLD_MIN; entityThreshold <= ENTITY_THRESHOLD_MAX; entityThreshold = entityThreshold + ENTITY_ITERATION) {
 			

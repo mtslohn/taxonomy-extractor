@@ -24,18 +24,19 @@ import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 import gnu.trove.map.TObjectIntMap;
 
-public class EntityCurriculumCoocurrenceHierarchicMatcher extends
+// Eh hierarquico
+public class CurriculumCoocurrenceMatcher extends
 		AbstractEntityCurriculumMatcher implements HierarchicApproach {
 
 	private static final int DEFAULT_LEVELS = 1;
 
 	private static final Logger LOGGER = Logger
-			.getLogger(EntityCurriculumCoocurrenceHierarchicMatcher.class);
+			.getLogger(CurriculumCoocurrenceMatcher.class);
 
 	private int levels;
 	private Map<Integer, String> curriculumMap;
 
-	public EntityCurriculumCoocurrenceHierarchicMatcher(int lineLimit) {
+	public CurriculumCoocurrenceMatcher(int lineLimit) {
 		setLevels(DEFAULT_LEVELS);
 		CurriculumListReader curriculumListReader = new CurriculumListReader();
 		curriculumMap = curriculumListReader.read(lineLimit);
@@ -59,6 +60,9 @@ public class EntityCurriculumCoocurrenceHierarchicMatcher extends
 		List<CurriculumCorrelation> correlations = new ArrayList<CurriculumCorrelation>();
 
 		for (Integer curriculumKey : curriculumMap.keySet()) {
+			if (curriculumKey % 100 == 0) {
+				LOGGER.info("Identificando correlações para o currículo de número " + (curriculumKey + 1) + "/" + curriculumMap.size());
+			}
 			String curriculum = curriculumMap.get(curriculumKey);
 			for (int indexOuter = 0; indexOuter < entities.size(); indexOuter++) {
 				String entityOuter = entities.get(indexOuter);
@@ -86,7 +90,7 @@ public class EntityCurriculumCoocurrenceHierarchicMatcher extends
 
 		for (int index = 0; index < correlations.size(); index++) {
 			if (index % 1000 == 0) {
-				LOGGER.info("Processando " + index);
+				LOGGER.info("Processando correlações para o par " + index);
 			}
 			CurriculumCorrelation correlation = correlations.get(index);
 			for (EntityPair pair : correlation.getPairs()) {

@@ -19,7 +19,8 @@ import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 import gnu.trove.map.TObjectIntMap;
 
-public class EntityCorpusCoocurrenceHierachicMatcher extends AbstractEntityCurriculumMatcher
+// Eh hierarquico
+public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher
 		implements HierarchicApproach {
 
 	private static final int DEFAULT_LEVELS = 3;
@@ -27,11 +28,11 @@ public class EntityCorpusCoocurrenceHierachicMatcher extends AbstractEntityCurri
 	private int levels;
 	private boolean useRMI = false;
 
-	public EntityCorpusCoocurrenceHierachicMatcher() {
+	public CorpusCoocurrenceMatcher() {
 		this(DEFAULT_LEVELS);
 	}
 
-	public EntityCorpusCoocurrenceHierachicMatcher(int levels) {
+	public CorpusCoocurrenceMatcher(int levels) {
 		setLevels(levels);
 	}
 
@@ -93,7 +94,7 @@ public class EntityCorpusCoocurrenceHierachicMatcher extends AbstractEntityCurri
 	}
 
 	public static void main(String[] args) throws RemoteException, NotBoundException {
-		new EntityCorpusCoocurrenceHierachicMatcher().writeTree();
+		new CorpusCoocurrenceMatcher().writeTree();
 	}
 
 	@Override

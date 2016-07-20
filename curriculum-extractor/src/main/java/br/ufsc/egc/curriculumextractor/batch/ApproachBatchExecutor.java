@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
-import br.ufsc.egc.curriculumextractor.approachs.selected.EntityCorpusCoocurrenceHierachicMatcher;
+import br.ufsc.egc.curriculumextractor.approachs.selected.CorpusCoocurrenceMatcher;
 
 public class ApproachBatchExecutor {
 	
@@ -15,7 +15,7 @@ public class ApproachBatchExecutor {
 
 	public static void main(String[] args) throws RemoteException, NotBoundException {
 		
-		EntityCorpusCoocurrenceHierachicMatcher approach = new EntityCorpusCoocurrenceHierachicMatcher();
+		CorpusCoocurrenceMatcher approach = new CorpusCoocurrenceMatcher();
 		
 		for (int entityThreshold = 1; entityThreshold <= ENTITY_THRESHOLD_MAX; entityThreshold++) {
 			approach.setEntityThreshold(entityThreshold);
