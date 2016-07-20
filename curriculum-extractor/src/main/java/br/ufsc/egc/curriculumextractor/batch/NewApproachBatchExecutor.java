@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
-import br.ufsc.egc.curriculumextractor.approachs.EntityCurriculumCoocurrenceHierarchicMatcher;
+import br.ufsc.egc.curriculumextractor.approachs.selected.EntityCurriculumCoocurrenceHierarchicMatcher;
 import br.ufsc.egc.curriculumextractor.core.NewEntityExtractor;
 import br.ufsc.egc.curriculumextractor.util.NewEntityExtractorUtils;
 import gnu.trove.map.TObjectIntMap;

@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
-import br.ufsc.egc.curriculumextractor.approachs.EntityCorpusCoocurrenceHierachicMatcher;
+import br.ufsc.egc.curriculumextractor.approachs.selected.EntityCorpusCoocurrenceHierachicMatcher;
 
 public class ApproachBatchExecutor {
 	

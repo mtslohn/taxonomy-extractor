@@ -1,4 +1,4 @@
-package br.ufsc.egc.curriculumextractor.approachs;
+package br.ufsc.egc.curriculumextractor.approachs.selected;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -9,6 +9,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
+import br.ufsc.egc.curriculumextractor.approachs.AbstractEntityCurriculumMatcher;
+import br.ufsc.egc.curriculumextractor.approachs.HierarchicApproach;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;

@@ -2,6 +2,7 @@ package br.ufsc.egc.curriculumextractor.approachs;
 
 import java.rmi.RemoteException;
 
+import br.ufsc.egc.curriculumextractor.approachs.selected.EntityCurriculumCoocurrenceHierarchicMatcher;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
