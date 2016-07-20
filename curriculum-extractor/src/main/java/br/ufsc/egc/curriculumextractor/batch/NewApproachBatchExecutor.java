@@ -28,7 +28,7 @@ public class NewApproachBatchExecutor {
 		
 		CurriculumCoocurrenceMatcher approach = new CurriculumCoocurrenceMatcher(READ_LINES_LIMIT);
 		
-		for (int entityThreshold = ENTITY_THRESHOLD_MIN; entityThreshold <= ENTITY_THRESHOLD_MAX; entityThreshold = entityThreshold + ENTITY_ITERATION) {
+		for (int entityThreshold = ENTITY_THRESHOLD_MAX; entityThreshold >= ENTITY_THRESHOLD_MIN; entityThreshold = entityThreshold - ENTITY_ITERATION) {
 			
 			TObjectIntMap<String> entitiesAndCountFilteredMap = NewEntityExtractorUtils.filterByEntityThreshold(entitiesAndCount, entityThreshold);
 			
