@@ -36,6 +36,12 @@ public class CurriculumCoocurrenceMatcher extends
 	private int levels;
 	private Map<Integer, String> curriculumMap;
 
+	private EntityPairCoocurrenceManager coocurrenceManager;
+
+	private List<String> entities;
+
+	private TObjectIntMap<String> entitiesAndCount;
+
 	public CurriculumCoocurrenceMatcher(int lineLimit) {
 		setLevels(DEFAULT_LEVELS);
 		CurriculumListReader curriculumListReader = new CurriculumListReader();
@@ -52,10 +58,13 @@ public class CurriculumCoocurrenceMatcher extends
 	public ApproachResponse createTree() {
 		throw new RuntimeException("Não suportado!!!");
 	}
-
-	public ApproachResponse createTree(TObjectIntMap<String> entitiesAndCount, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
+	
+	public void prepareForEntities(TObjectIntMap<String> entitiesAndCount) {
+		
+		this.entitiesAndCount = entitiesAndCount;
 
 		List<String> entities = new ArrayList<String>(entitiesAndCount.keySet());
+		this.entities = entities;
 
 		List<CurriculumCorrelation> correlations = new ArrayList<CurriculumCorrelation>();
 
@@ -86,7 +95,7 @@ public class CurriculumCoocurrenceMatcher extends
 			}
 		}
 
-		EntityPairCoocurrenceManager manager = new EntityPairCoocurrenceManager();
+		coocurrenceManager = new EntityPairCoocurrenceManager();
 
 		for (int index = 0; index < correlations.size(); index++) {
 			if (index % 1000 == 0) {
@@ -94,9 +103,13 @@ public class CurriculumCoocurrenceMatcher extends
 			}
 			CurriculumCorrelation correlation = correlations.get(index);
 			for (EntityPair pair : correlation.getPairs()) {
-				manager.addPair(pair.getEntity1(), pair.getEntity2());
+				coocurrenceManager.addPair(pair.getEntity1(), pair.getEntity2());
 			}
 		}
+		
+	}
+
+	public ApproachResponse createTree(int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
 
 		// ja tenho as relacoes e a frequencia delas... agora eh hora de montar
 		// a arvore
@@ -107,7 +120,7 @@ public class CurriculumCoocurrenceMatcher extends
 
 		Tree tree = new Tree();
 
-		List<EntityPair> keyList = new ArrayList<EntityPair>(manager
+		List<EntityPair> keyList = new ArrayList<EntityPair>(coocurrenceManager
 				.getPairsCoocurrence().keySet());
 
 		for (int index = 0; index < keyList.size(); index++) {
@@ -151,7 +164,7 @@ public class CurriculumCoocurrenceMatcher extends
 
 	@Override
 	public void writeTree(int entityThreshold, TObjectIntMap<String> entitiesAndCount, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
-		ApproachResponse approachResponse = createTree(entitiesAndCount, numberOfTokens, recognizedTokens);
+		ApproachResponse approachResponse = createTree(numberOfTokens, recognizedTokens);
 		Tree tree = approachResponse.getTree();
 		TreeWriter treeWriter = new TreeWriter();
 		String fileName = String.format("Curriculum Coocurrence - %s entityThreshold - %s levels", entityThreshold, this.getLevels());

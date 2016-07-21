@@ -32,6 +32,8 @@ public class NewApproachBatchExecutor {
 			
 			TObjectIntMap<String> entitiesAndCountFilteredMap = NewEntityExtractorUtils.filterByEntityThreshold(entitiesAndCount, entityThreshold);
 			
+			approach.prepareForEntities(entitiesAndCountFilteredMap);
+			
 			for (int levels = 1; levels <= LEVELS_MAX; levels++) {
 				approach.setLevels(levels);
 				LOGGER.info("Iniciando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
