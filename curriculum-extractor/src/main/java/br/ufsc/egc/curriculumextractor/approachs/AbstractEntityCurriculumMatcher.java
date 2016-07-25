@@ -13,9 +13,9 @@ import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import gnu.trove.procedure.TObjectProcedure;
 
 public abstract class AbstractEntityCurriculumMatcher {
 	
@@ -109,11 +109,49 @@ public abstract class AbstractEntityCurriculumMatcher {
 	}
 
 	private void createTokenStatistics(TObjectIntHashMap<String> words, Term root, TObjectIntMap<String> entitiesAndCount) {
+		
 		int factor = entitiesAndCount.get(root.getLabel());
+		
+		if (factor == 0) {
+			
+			FindCaseInsensitiveProcedure procedure = new FindCaseInsensitiveProcedure();
+			procedure.setSearchKey(root.getLabel());
+			entitiesAndCount.forEachKey(procedure);
+
+			if (procedure.getFoundKey() != null) {
+				factor = entitiesAndCount.get(procedure.getFoundKey());
+			}
+			
+		}
+		
 		words.adjustOrPutValue(root.getLabel(), factor, factor);
 		for (Term son: root.getSons()) {
 			createTokenStatistics(words, son, entitiesAndCount);
 		}
 	}
+	
+	private class FindCaseInsensitiveProcedure implements TObjectProcedure<String> {
+		
+		String searchKey = null;
+		String foundKey = null;
+		
+		@Override
+		public boolean execute(String key) {
+			if (key.equalsIgnoreCase(searchKey)) {
+				foundKey = key;
+				return false;
+			}
+			return true;
+		}
 
+		public void setSearchKey(String searchKey) {
+			this.searchKey = searchKey;
+		}
+
+		public String getFoundKey() {
+			return foundKey;
+		}
+		
+	}
+	
 }
