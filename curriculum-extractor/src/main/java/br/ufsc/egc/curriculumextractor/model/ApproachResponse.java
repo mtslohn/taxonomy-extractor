@@ -11,13 +11,13 @@ public class ApproachResponse {
 	private Tree tree;
 	private List<String> discoveredEntities;
 	private NERMetrics nerMetrics;
-	private Set<String> cyclicTokens;
+	private Set<String> cyclicWords;
 	
 	public ApproachResponse(Tree tree, List<String> discoveredEntities, NERMetrics nerMetrics, Set<String> cyclicTokens) {
 		this.tree = tree;
 		this.discoveredEntities = discoveredEntities;
 		this.nerMetrics = nerMetrics;
-		this.cyclicTokens = cyclicTokens;
+		this.cyclicWords = cyclicTokens;
 	}
 
 	public Tree getTree() {
@@ -32,8 +32,8 @@ public class ApproachResponse {
 		return nerMetrics;
 	}
 	
-	public Set<String> getCyclicTokens() {
-		return cyclicTokens;
+	public Set<String> getCyclicWords() {
+		return cyclicWords;
 	}
 	
 }

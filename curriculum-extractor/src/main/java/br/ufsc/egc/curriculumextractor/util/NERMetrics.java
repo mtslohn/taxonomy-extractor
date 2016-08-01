@@ -1,5 +1,7 @@
 package br.ufsc.egc.curriculumextractor.util;
 
+import java.text.DecimalFormat;
+
 public class NERMetrics {
 
 	private int numberOfTokens;
@@ -35,18 +37,20 @@ public class NERMetrics {
 	public void setUsedTokens(int usedTokens) {
 		this.usedTokens = usedTokens;
 	}
-	
+
 	public double getRecognizementFactor() {
-		return recognizedTokens/(numberOfTokens * 1.0);
+		return recognizedTokens / (numberOfTokens * 1.0);
 	}
-	
+
 	public double getUsedTokensFactor() {
-		return usedTokens/(numberOfTokens * 1.0);
+		return usedTokens / (numberOfTokens * 1.0);
 	}
 
 	public String print() {
-		return "numberOfTokens=" + numberOfTokens + "\nrecognizedTokens=" + recognizedTokens
-				+ "\nusedTokens=" + usedTokens + "\nrecognizementFactor=" + getRecognizementFactor() + "\nusedTokensFactor=" + getUsedTokensFactor();
+		DecimalFormat df = new DecimalFormat("0.000");
+		return "numberOfTokens=" + numberOfTokens + "\nrecognizedTokens=" + recognizedTokens + "\nusedTokens="
+				+ usedTokens + "\nrecognizementFactor=" + df.format(getRecognizementFactor()) + "\nusedTokensFactor="
+				+ df.format(getUsedTokensFactor());
 	}
-	
+
 }

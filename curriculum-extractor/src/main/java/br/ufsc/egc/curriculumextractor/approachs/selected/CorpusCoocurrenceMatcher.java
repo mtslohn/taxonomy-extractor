@@ -103,7 +103,7 @@ public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher
 		Tree tree = approachResponse.getTree();
 		TreeWriter treeWriter = new TreeWriter();
 		String fileName = String.format("Corpus Coocurrence - %s entityThreshold - %s levels", entityThreshold, this.getLevels());
-		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(), tree);
+		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
 	}
 
 }

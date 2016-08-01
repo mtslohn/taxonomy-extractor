@@ -24,7 +24,7 @@ public class RestrictEntityHierachicCleanedCurriculumMatcherWithJoin implements 
 		tree.join();
 		
 		TreeWriter treeWriter = new TreeWriter();
-		treeWriter.write(getClass().getSimpleName(), approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(),tree);
+		treeWriter.write(getClass().getSimpleName(), approachResponse.getNerMetrics(), approachResponse.getCyclicWords(),tree);
 		
 	}
 	

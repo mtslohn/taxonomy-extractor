@@ -1,5 +1,6 @@
 package br.ufsc.egc.curriculumextractor.util;
 
+import java.text.DecimalFormat;
 import java.util.Set;
 
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
@@ -31,6 +32,7 @@ public class TreeMetrics {
 		expansionFactorAvg = expansionSum / (double) expansions;
 		termLevelAvg = termLevelSum / (double) nodeCount;
 		cyclicWordsNumber = cyclicWords.size();
+		System.out.println(cyclicWordsNumber);
 		cyclicWordsFactor = cyclicWordsNumber / (nodeCount * 1.0);
 		horizontality = maxLevel / (nodeCount * 1.0);
 		verticality = nodeCount / (maxLevel * 1.0);
@@ -86,17 +88,18 @@ public class TreeMetrics {
 	}
 
 	public String print() {
+		DecimalFormat df = new DecimalFormat("0.000");
 		return "nodeCount=" + nodeCount 
 				+ "\nmaxLevel=" + maxLevel 
 				+ "\nexpansions=" + expansions 
 				+ "\nexpansionSum=" + expansionSum 
-				+ "\nexpansionFactorAvg=" + expansionFactorAvg
-				+ "\ndensityAvg=" + densityAvg
-				+ "\ntermLevelAvg=" + termLevelAvg 
+				+ "\nexpansionFactorAvg=" + df.format(expansionFactorAvg)
+				+ "\ndensityAvg=" + df.format(densityAvg)
+				+ "\ntermLevelAvg=" + df.format(termLevelAvg) 
 				+ "\ncyclicWordsNumber=" + cyclicWordsNumber 
-				+ "\ncyclicWordsFactor=" + cyclicWordsFactor 
-				+ "\nhorizontality=" + horizontality 
-				+ "\nverticality=" + verticality;
+				+ "\ncyclicWordsFactor=" + df.format(cyclicWordsFactor) 
+				+ "\nhorizontality=" + df.format(horizontality) 
+				+ "\nverticality=" + df.format(verticality);
 	}
 
 }

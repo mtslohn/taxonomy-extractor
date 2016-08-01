@@ -24,7 +24,7 @@ public class EntityCurriculumHierarchicCoocurrenceMatcherCleanedWithJoin impleme
 		tree = tree.clean(response.getDiscoveredEntities());
 		
 		TreeWriter treeWriter = new TreeWriter();
-		treeWriter.write(getClass().getSimpleName(), response.getNerMetrics(), response.getCyclicTokens(), tree);
+		treeWriter.write(getClass().getSimpleName(), response.getNerMetrics(), response.getCyclicWords(), tree);
 		
 	}
 	

@@ -73,26 +73,30 @@ public class CurriculumCoocurrenceMatcher extends
 				LOGGER.info("Identificando correlações para o currículo de número " + (curriculumKey + 1) + "/" + curriculumMap.size());
 			}
 			String curriculum = curriculumMap.get(curriculumKey);
+
+			CurriculumCorrelation correlation = new CurriculumCorrelation();
+			correlation.setCurriculumId(curriculumKey);
+			
 			for (int indexOuter = 0; indexOuter < entities.size(); indexOuter++) {
 				String entityOuter = entities.get(indexOuter);
 				if (curriculum.contains(entityOuter)) {
 					for (int indexInner = indexOuter + 1; indexInner < entities
 							.size(); indexInner++) {
 						String entityInner = entities.get(indexInner);
-						CurriculumCorrelation correlation = new CurriculumCorrelation();
-						correlation.setCurriculumId(curriculumKey);
 						if (curriculum.contains(entityInner)) {
 							EntityPair pair = new EntityPair();
 							pair.setEntity1(entityOuter);
 							pair.setEntity2(entityInner);
 							correlation.getPairs().add(pair);
 						}
-						if (!correlation.getPairs().isEmpty()) {
-							correlations.add(correlation);
-						}
 					}
 				}
 			}
+
+			if (!correlation.getPairs().isEmpty()) {
+				correlations.add(correlation);
+			}
+			
 		}
 
 		coocurrenceManager = new EntityPairCoocurrenceManager();
@@ -168,7 +172,7 @@ public class CurriculumCoocurrenceMatcher extends
 		Tree tree = approachResponse.getTree();
 		TreeWriter treeWriter = new TreeWriter();
 		String fileName = String.format("Curriculum Coocurrence - %s entityThreshold - %s levels", entityThreshold, this.getLevels());
-		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(), tree);
+		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
 	}
 
 }

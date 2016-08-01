@@ -19,7 +19,7 @@ public class EntityCorpusBatchExecutor {
 	
 	private static final int READ_LINES_LIMIT = EntityExtractorConstants.READ_LINES_LIMIT;
 	private static final int LEVELS_MAX = 3;
-	private static final int ENTITY_THRESHOLD_MIN = 500; // READ_LINES_LIMIT / 50
+	private static final int ENTITY_THRESHOLD_MIN = 100; // READ_LINES_LIMIT / 50
 	private static final int ENTITY_THRESHOLD_MAX = 1000;
 	private static final int ENTITY_ITERATION = 100;
 	private static final boolean EXTRACT_ENTITIES_ON_RUNTIME = false;
@@ -61,7 +61,7 @@ public class EntityCorpusBatchExecutor {
 				Tree tree = approachResponse.getTree();
 				TreeWriter treeWriter = new TreeWriter();
 				String fileName = String.format("Curriculum Coocurrence - %s linhas lidas - %s entityThreshold - %s levels", READ_LINES_LIMIT, entityThreshold, levels);
-				treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicTokens(), tree);
+				treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
 				
 				LOGGER.info("Terminando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
 			}
