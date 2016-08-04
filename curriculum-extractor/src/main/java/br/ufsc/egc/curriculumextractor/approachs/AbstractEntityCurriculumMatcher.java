@@ -88,18 +88,19 @@ public abstract class AbstractEntityCurriculumMatcher {
 	}
 	
 	protected TokenStatistics countUsedTokens(Tree tree, TObjectIntMap<String> entitiesAndCount) {
-		TObjectIntHashMap<String> words = new TObjectIntHashMap<String>();
+		TObjectIntHashMap<String> wordsSum = new TObjectIntHashMap<String>();
+		TObjectIntHashMap<String> wordsCount = new TObjectIntHashMap<String>();
 		for (Term root: tree.getRoots()) {
-			createTokenStatistics(words, root, entitiesAndCount);
+			createTokenStatistics(wordsSum, wordsCount, root, entitiesAndCount);
 		}
 
 		int count = 0;
 		
 		Set<String> cyclicWords = new HashSet<String>();
 
-		for (Object word : words.keys()) {
+		for (Object word : wordsCount.keys()) {
 			count += ((String) word).split(BLANKSPACE).length;
-			if (words.get(word) > 1) {
+			if (wordsCount.get(word) > 1) {
 				cyclicWords.add((String) word);
 			}
 		}
@@ -108,7 +109,7 @@ public abstract class AbstractEntityCurriculumMatcher {
 
 	}
 
-	private void createTokenStatistics(TObjectIntHashMap<String> words, Term root, TObjectIntMap<String> entitiesAndCount) {
+	private void createTokenStatistics(TObjectIntHashMap<String> wordsSum, TObjectIntHashMap<String> wordsCount, Term root, TObjectIntMap<String> entitiesAndCount) {
 		
 		int factor = entitiesAndCount.get(root.getLabel());
 		
@@ -124,9 +125,11 @@ public abstract class AbstractEntityCurriculumMatcher {
 			
 		}
 		
-		words.adjustOrPutValue(root.getLabel(), factor, factor);
+		wordsSum.put(root.getLabel(), factor);
+		wordsCount.adjustOrPutValue(root.getLabel(), 1, 1);
+		
 		for (Term son: root.getSons()) {
-			createTokenStatistics(words, son, entitiesAndCount);
+			createTokenStatistics(wordsSum, wordsCount, son, entitiesAndCount);
 		}
 	}
 	
