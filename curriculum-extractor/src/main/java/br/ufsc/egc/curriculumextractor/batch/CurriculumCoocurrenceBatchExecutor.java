@@ -20,8 +20,8 @@ public class CurriculumCoocurrenceBatchExecutor {
 	private static final int READ_LINES_LIMIT = EntityExtractorConstants.READ_LINES_LIMIT;
 	private static final int LEVELS_MAX = 3;
 	private static final int ENTITY_THRESHOLD_MIN = 100; // READ_LINES_LIMIT / 50
-	private static final int ENTITY_THRESHOLD_MAX = 1000;
-	private static final int ENTITY_ITERATION = 100;
+	private static final int ENTITY_THRESHOLD_MAX = 500;
+	private static final int ENTITY_ITERATION = 50;
 	private static final boolean EXTRACT_ENTITIES_ON_RUNTIME = false;
 
 	private static final Logger LOGGER = Logger.getLogger(CurriculumCoocurrenceBatchExecutor.class); 
