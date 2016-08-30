@@ -1,11 +1,16 @@
 package br.ufsc.egc.curriculumextractor.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CurriculumCorrelation {
+import org.mapdb.Serializer;
 
+public class CurriculumCorrelation implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	private int curriculumId;
 	private List<EntityPair> pairs = new ArrayList<EntityPair>();
 

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mapdb.DBMaker;
+
 public class CurriculumListReader {
 
 	public static final String CURRICULUM_LIST_TXT = "curriculums/saida.txt";
@@ -21,7 +23,7 @@ public class CurriculumListReader {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
-		Map<Integer, String> curriculumMap = new HashMap<Integer, String>();
+		Map<Integer, String> curriculumMap = DBMaker.newTempTreeMap();
 
 		try {
 			

@@ -1,9 +1,11 @@
 package br.ufsc.egc.curriculumextractor.model;
 
-import java.util.Objects;
+import java.io.Serializable;
 
-public class EntityPair {
+public class EntityPair implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private String entity1;
 	private String entity2;
 

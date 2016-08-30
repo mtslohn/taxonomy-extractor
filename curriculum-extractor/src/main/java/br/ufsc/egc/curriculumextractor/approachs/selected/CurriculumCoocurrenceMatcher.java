@@ -3,10 +3,15 @@ package br.ufsc.egc.curriculumextractor.approachs.selected;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.ahocorasick.trie.Trie;
 import org.apache.log4j.Logger;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
 import br.ufsc.egc.curriculumextractor.approachs.AbstractEntityCurriculumMatcher;
@@ -65,25 +70,29 @@ public class CurriculumCoocurrenceMatcher extends
 
 		List<String> entities = new ArrayList<String>(entitiesAndCount.keySet());
 		this.entities = entities;
+		
+		DB temp = DBMaker.newTempFileDB().make();
+		Set<CurriculumCorrelation> correlations = temp.createHashSet("correlations").make();
 
-		List<CurriculumCorrelation> correlations = new ArrayList<CurriculumCorrelation>();
+//		List<CurriculumCorrelation> correlations = new ArrayList<CurriculumCorrelation>();
 
 		for (Integer curriculumKey : curriculumMap.keySet()) {
 			if (curriculumKey % 100 == 0) {
 				LOGGER.info("Identificando correlações para o currículo de número " + (curriculumKey + 1) + "/" + curriculumMap.size());
 			}
-			String curriculum = curriculumMap.get(curriculumKey);
+			String curriculumText = curriculumMap.get(curriculumKey);
 
 			CurriculumCorrelation correlation = new CurriculumCorrelation();
 			correlation.setCurriculumId(curriculumKey);
 			
 			for (int indexOuter = 0; indexOuter < entities.size(); indexOuter++) {
 				String entityOuter = entities.get(indexOuter);
-				if (curriculum.contains(entityOuter)) {
+				// indexOf eh utilizado em vez de contains pela performance
+				if (curriculumText.indexOf(entityOuter) != -1) {
 					for (int indexInner = indexOuter + 1; indexInner < entities
 							.size(); indexInner++) {
 						String entityInner = entities.get(indexInner);
-						if (curriculum.contains(entityInner)) {
+						if (curriculumText.indexOf(entityInner) != -1) {
 							EntityPair pair = new EntityPair();
 							pair.setEntity1(entityOuter);
 							pair.setEntity2(entityInner);
@@ -100,12 +109,14 @@ public class CurriculumCoocurrenceMatcher extends
 		}
 
 		coocurrenceManager = new EntityPairCoocurrenceManager();
+		
+		Iterator<CurriculumCorrelation> itCorrelations = correlations.iterator();
 
 		for (int index = 0; index < correlations.size(); index++) {
 			if (index % 1000 == 0) {
 				LOGGER.info("Processando correlações para o par " + index);
 			}
-			CurriculumCorrelation correlation = correlations.get(index);
+			CurriculumCorrelation correlation = itCorrelations.next();
 			for (EntityPair pair : correlation.getPairs()) {
 				coocurrenceManager.addPair(pair.getEntity1(), pair.getEntity2());
 			}

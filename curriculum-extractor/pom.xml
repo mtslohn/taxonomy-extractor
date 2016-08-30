@@ -70,5 +70,19 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
+		<dependency>
+			<groupId>org.mapdb</groupId>
+			<artifactId>mapdb</artifactId>
+			<version>1.0.9</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.ahocorasick/ahocorasick -->
+		<dependency>
+			<groupId>org.ahocorasick</groupId>
+			<artifactId>ahocorasick</artifactId>
+			<version>0.2.1</version>
+		</dependency>
+
 	</dependencies>
 </project>
