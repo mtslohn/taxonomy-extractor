@@ -3,6 +3,8 @@ package br.ufsc.egc.curriculumextractor.util;
 import java.text.DecimalFormat;
 import java.util.Set;
 
+import br.ufsc.egc.agrovoc.service.AgrovocService;
+import br.ufsc.egc.agrovoc.service.AgrovocServiceTest;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 
@@ -13,7 +15,13 @@ public class TreeMetrics {
 	private int expansions = 0;
 	private int expansionSum = 0;
 	private double expansionFactorAvg;
+	private int termsFoundInAgrovoc = 0;
+	private double agrovocNameMatching;
+	
+	// TODO remover esse parametro
+	// nao eh utilizado
 	private double densityAvg;
+	
 	private double termLevelAvg;
 	private int termLevelSum = 0;
 	private Set<String> cyclicWords;
@@ -21,9 +29,14 @@ public class TreeMetrics {
 	private double cyclicWordsFactor;
 	private double horizontality;
 	private double verticality;
+	
+	// servico
+	
+	private AgrovocService agrovocService;
 
 	public TreeMetrics(Tree tree, Set<String> cyclicWords) {
 		this.cyclicWords = cyclicWords;
+		this.agrovocService = AgrovocService.getInstance();
 		calculateSums(tree);
 		calculateStatistics();
 	}
@@ -32,10 +45,10 @@ public class TreeMetrics {
 		expansionFactorAvg = expansionSum / (double) expansions;
 		termLevelAvg = termLevelSum / (double) nodeCount;
 		cyclicWordsNumber = cyclicWords.size();
-		System.out.println(cyclicWordsNumber);
 		cyclicWordsFactor = cyclicWordsNumber / (nodeCount * 1.0);
 		horizontality = maxLevel / (nodeCount * 1.0);
 		verticality = nodeCount / (maxLevel * 1.0);
+		agrovocNameMatching = termsFoundInAgrovoc*100.0/nodeCount;
 	}
 
 	private void calculateSums(Tree tree) {
@@ -46,6 +59,9 @@ public class TreeMetrics {
 
 	private void calculate(Term term, int level) {
 		nodeCount++;
+		if (agrovocService.verifyIfExistsLabel(term.getLabel())) {
+			termsFoundInAgrovoc++;
+		}
 		if (level > maxLevel) {
 			maxLevel = level;
 		}
@@ -99,7 +115,9 @@ public class TreeMetrics {
 				+ "\ncyclicWordsNumber=" + cyclicWordsNumber 
 				+ "\ncyclicWordsFactor=" + df.format(cyclicWordsFactor) 
 				+ "\nhorizontality=" + df.format(horizontality) 
-				+ "\nverticality=" + df.format(verticality);
+				+ "\nverticality=" + df.format(verticality)
+				+ "\ntermsFoundInAgrovoc=" + termsFoundInAgrovoc
+				+ "\nagrovocNameMatching=" + df.format(agrovocNameMatching);
 	}
 
 }
