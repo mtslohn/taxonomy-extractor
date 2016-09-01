@@ -14,7 +14,7 @@ public class TreeWriter {
 
 	private static final String SPACER = "\n\n========\n\n";
 	private static final String FILE_NAME_TEMPLATE = "results/%s-%s.txt";
-	private static final String DATE_FORMAT = "yyyy-MM-dd.HH.mm.ss";
+	public static final String DATE_FORMAT = "yyyy-MM-dd.HH.mm.ss";
 
 	public void write(String strategyName, NERMetrics nerMetrics, Set<String> cyclicWords, Tree tree) {
 
