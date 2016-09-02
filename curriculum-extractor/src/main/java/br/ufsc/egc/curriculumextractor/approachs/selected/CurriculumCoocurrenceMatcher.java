@@ -21,6 +21,7 @@ import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
+import br.ufsc.egc.curriculumextractor.model.json.util.JsonNodeWriter;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.NERMetrics;
@@ -184,6 +185,8 @@ public class CurriculumCoocurrenceMatcher extends
 		TreeWriter treeWriter = new TreeWriter();
 		String fileName = String.format("Curriculum Coocurrence - %s entityThreshold - %s levels", entityThreshold, this.getLevels());
 		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
+		JsonNodeWriter jsonWriter = new JsonNodeWriter();
+		jsonWriter.writeTree(fileName, tree);
 	}
 
 }

@@ -26,6 +26,7 @@ public class JsonNodeWriter {
 	public Node parse(Tree tree) {
 		Node node = new Node();
 		node.setText(new Text(ROOT_NAME));
+		node.setChildren(new ArrayList<>());
 		parse(node, tree.getRoots());
 		return node;
 	}

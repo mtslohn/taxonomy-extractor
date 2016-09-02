@@ -9,6 +9,7 @@ import br.ufsc.egc.curriculumextractor.approachs.selected.CorpusCoocurrenceMatch
 import br.ufsc.egc.curriculumextractor.batch.entities.EntityReader;
 import br.ufsc.egc.curriculumextractor.core.NewEntityExtractor;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
+import br.ufsc.egc.curriculumextractor.model.json.util.JsonNodeWriter;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.NewEntityExtractorUtils;
 import br.ufsc.egc.curriculumextractor.util.TreeWriter;
@@ -61,6 +62,8 @@ public class CorpusCoocurrenceBatchExecutor {
 				TreeWriter treeWriter = new TreeWriter();
 				String fileName = String.format("Corpus Coocurrence - %s linhas lidas - %s entityThreshold - %s levels", READ_LINES_LIMIT, entityThreshold, levels);
 				treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
+				JsonNodeWriter jsonWriter = new JsonNodeWriter();
+				jsonWriter.writeTree(fileName, tree);
 				
 				LOGGER.info("Terminando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
 			}
