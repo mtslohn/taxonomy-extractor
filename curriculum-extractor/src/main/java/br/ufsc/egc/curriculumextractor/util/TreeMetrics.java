@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.Set;
 
 import br.ufsc.egc.agrovoc.service.AgrovocService;
-import br.ufsc.egc.agrovoc.service.AgrovocServiceTest;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 
@@ -17,11 +16,6 @@ public class TreeMetrics {
 	private double expansionFactorAvg;
 	private int termsFoundInAgrovoc = 0;
 	private double agrovocNameMatching;
-	
-	// TODO remover esse parametro
-	// nao eh utilizado
-	private double densityAvg;
-	
 	private double termLevelAvg;
 	private int termLevelSum = 0;
 	private Set<String> cyclicWords;
@@ -95,14 +89,6 @@ public class TreeMetrics {
 		return expansionFactorAvg;
 	}
 
-	public double getDensityAvg() {
-		return densityAvg;
-	}
-
-	public double getTermLevelAvg() {
-		return termLevelAvg;
-	}
-
 	public String print() {
 		DecimalFormat df = new DecimalFormat("0.000");
 		return "nodeCount=" + nodeCount 
@@ -110,14 +96,26 @@ public class TreeMetrics {
 				+ "\nexpansions=" + expansions 
 				+ "\nexpansionSum=" + expansionSum 
 				+ "\nexpansionFactorAvg=" + df.format(expansionFactorAvg)
-				+ "\ndensityAvg=" + df.format(densityAvg)
 				+ "\ntermLevelAvg=" + df.format(termLevelAvg) 
 				+ "\ncyclicWordsNumber=" + cyclicWordsNumber 
 				+ "\ncyclicWordsFactor=" + df.format(cyclicWordsFactor) 
 				+ "\nhorizontality=" + df.format(horizontality) 
 				+ "\nverticality=" + df.format(verticality)
-				+ "\ntermsFoundInAgrovoc=" + termsFoundInAgrovoc
-				+ "\nagrovocNameMatching=" + df.format(agrovocNameMatching);
+				+ "\n\ntermsFoundInAgrovoc=" + termsFoundInAgrovoc
+				+ "\nagrovocNameMatching=" + df.format(agrovocNameMatching) + 
+				
+				"\n\n" + nodeCount 
+				+ "\n" + maxLevel 
+				+ "\n" + expansions 
+				+ "\n" + expansionSum 
+				+ "\n" + df.format(expansionFactorAvg)
+				+ "\n" + df.format(termLevelAvg) 
+				+ "\n" + cyclicWordsNumber 
+				+ "\n" + df.format(cyclicWordsFactor) 
+				+ "\n" + df.format(horizontality) 
+				+ "\n" + df.format(verticality)
+				+ "\n\n" + termsFoundInAgrovoc
+				+ "\n" + df.format(agrovocNameMatching);
 	}
 
 }

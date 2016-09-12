@@ -47,7 +47,7 @@ public class NERMetrics {
 	}
 
 	public String print() {
-		DecimalFormat df = new DecimalFormat("0.000");
+		DecimalFormat df = new DecimalFormat("0.0000000");
 		return "numberOfTokens=" + numberOfTokens + "\nrecognizedTokens=" + recognizedTokens + "\nusedTokens="
 				+ usedTokens + "\nrecognizementFactor=" + df.format(getRecognizementFactor()) + "\nusedTokensFactor="
 				+ df.format(getUsedTokensFactor());

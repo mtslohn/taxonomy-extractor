@@ -19,11 +19,11 @@ import gnu.trove.map.TObjectIntMap;
 public class CorpusCoocurrenceBatchExecutor {
 	
 	private static final int READ_LINES_LIMIT = EntityExtractorConstants.READ_LINES_LIMIT;
-	private static final int LEVELS_MAX = 3;
-	private static final int ENTITY_THRESHOLD_MIN = 50; // READ_LINES_LIMIT / 50
-	private static final int ENTITY_THRESHOLD_MAX = 500;
-	private static final int ENTITY_ITERATION = 50;
+	
 	private static final boolean EXTRACT_ENTITIES_ON_RUNTIME = false;
+	
+	private static final int[] ENTITY_THRESHOLD_ARRAY = {1000, 800, 500, 300, 100};
+	private static final int[] LEVELS_ARRAY = {1, 2, 3};
 
 	private static final Logger LOGGER = Logger.getLogger(CorpusCoocurrenceBatchExecutor.class); 
 
@@ -49,9 +49,9 @@ public class CorpusCoocurrenceBatchExecutor {
 		}
 		CorpusCoocurrenceMatcher approach = new CorpusCoocurrenceMatcher(READ_LINES_LIMIT);
 		
-		for (int entityThreshold = ENTITY_THRESHOLD_MAX; entityThreshold >= ENTITY_THRESHOLD_MIN; entityThreshold = entityThreshold - ENTITY_ITERATION) {
+		for (int entityThreshold : ENTITY_THRESHOLD_ARRAY) {
 			TObjectIntMap<String> entitiesAndCountFilteredMap = NewEntityExtractorUtils.filterByEntityThreshold(entitiesAndCount, entityThreshold);
-			for (int levels = 1; levels <= LEVELS_MAX; levels++) {
+			for (int levels : LEVELS_ARRAY) {
 
 				approach.setLevels(levels);
 				
@@ -60,7 +60,7 @@ public class CorpusCoocurrenceBatchExecutor {
 				ApproachResponse approachResponse = approach.createTree(entitiesAndCountFilteredMap, numberOfTokens, recognizedTokens);
 				Tree tree = approachResponse.getTree();
 				TreeWriter treeWriter = new TreeWriter();
-				String fileName = String.format("Corpus Coocurrence - %s linhas lidas - %s entityThreshold - %s levels", READ_LINES_LIMIT, entityThreshold, levels);
+				String fileName = String.format("Corpus - %s linhas lidas - %s entityThreshold - %s levels", READ_LINES_LIMIT, entityThreshold, levels);
 				treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
 				JsonNodeWriter jsonWriter = new JsonNodeWriter();
 				jsonWriter.writeTree(fileName, tree);

@@ -19,7 +19,7 @@ import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
 public class JsonNodeWriter {
 	
-	private static final String FILE_NAME_TEMPLATE = "results/%s-%s.json";
+	private static final String FILE_NAME_TEMPLATE = "results/json/%s-%s.json";
 	
 	private static final String ROOT_NAME = "Taxonomia";
 
