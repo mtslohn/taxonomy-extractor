@@ -18,6 +18,8 @@ import gnu.trove.map.TObjectIntMap;
 
 public class CorpusCoocurrenceBatchExecutor {
 	
+	private static final String PATH_PREFIX = "corpus";
+
 	private static final int READ_LINES_LIMIT = EntityExtractorConstants.READ_LINES_LIMIT;
 	
 	private static final boolean EXTRACT_ENTITIES_ON_RUNTIME = false;
@@ -60,10 +62,10 @@ public class CorpusCoocurrenceBatchExecutor {
 				ApproachResponse approachResponse = approach.createTree(entitiesAndCountFilteredMap, numberOfTokens, recognizedTokens);
 				Tree tree = approachResponse.getTree();
 				TreeWriter treeWriter = new TreeWriter();
-				String fileName = String.format("Corpus - %s linhas lidas - %s entityThreshold - %s levels", READ_LINES_LIMIT, entityThreshold, levels);
-				treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
+				String fileName = String.format("%s lines - %s entityThreshold - %s levels", READ_LINES_LIMIT, entityThreshold, levels);
+				treeWriter.write(PATH_PREFIX, fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
 				JsonNodeWriter jsonWriter = new JsonNodeWriter();
-				jsonWriter.writeTree(fileName, tree);
+				jsonWriter.writeTree(PATH_PREFIX, fileName, tree);
 				
 				LOGGER.info("Terminando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
 			}

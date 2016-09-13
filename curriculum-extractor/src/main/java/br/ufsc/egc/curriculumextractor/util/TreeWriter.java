@@ -13,22 +13,23 @@ import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 public class TreeWriter {
 
 	private static final String SPACER = "\n\n========\n\n";
-	private static final String FILE_NAME_TEMPLATE = "results/txt/%s-%s.txt";
+	private static final String FILE_NAME_TEMPLATE = "results/txt/%s/%s-%s.txt";
 	public static final String DATE_FORMAT = "yyyy-MM-dd.HH.mm.ss";
 
-	public void write(String strategyName, NERMetrics nerMetrics, Set<String> cyclicWords, Tree tree) {
+	public void write(String pathPrefix, String strategyName, NERMetrics nerMetrics, Set<String> cyclicWords,
+			Tree tree) {
 
-		File file = new File(createFileName(strategyName));
+		File file = new File(createFileName(pathPrefix, strategyName));
 
 		file.getParentFile().mkdirs();
 
 		FileWriter fileWriter = null;
 		BufferedWriter buffWriter = null;
 		try {
-			
+
 			fileWriter = new FileWriter(file);
 			buffWriter = new BufferedWriter(fileWriter);
-			
+
 			TreeMetrics metrics = new TreeMetrics(tree, cyclicWords);
 
 			buffWriter.write(nerMetrics.print());
@@ -36,9 +37,9 @@ public class TreeWriter {
 			buffWriter.write(metrics.print());
 			buffWriter.write(SPACER);
 			buffWriter.write(tree.print());
-			
+
 			buffWriter.flush();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -59,9 +60,9 @@ public class TreeWriter {
 		}
 	}
 
-	private String createFileName(String strategyName) {
+	private String createFileName(String pathPrefix, String strategyName) {
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-		return String.format(FILE_NAME_TEMPLATE, strategyName,
+		return String.format(FILE_NAME_TEMPLATE, pathPrefix, strategyName,
 				sdf.format(Calendar.getInstance().getTime()));
 	}
 }

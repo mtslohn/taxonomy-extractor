@@ -19,7 +19,7 @@ import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 
 public class JsonNodeWriter {
 	
-	private static final String FILE_NAME_TEMPLATE = "results/json/%s-%s.json";
+	private static final String FILE_NAME_TEMPLATE = "results/json/%s/%s-%s.json";
 	
 	private static final String ROOT_NAME = "Taxonomia";
 
@@ -43,9 +43,11 @@ public class JsonNodeWriter {
 		}
 	}
 	
-	private String createFileName(String strategyName) {
+
+
+	private String createFileName(String pathPrefix, String strategyName) {
 		SimpleDateFormat sdf = new SimpleDateFormat(TreeWriter.DATE_FORMAT);
-		return String.format(FILE_NAME_TEMPLATE, strategyName,
+		return String.format(FILE_NAME_TEMPLATE, pathPrefix, strategyName,
 				sdf.format(Calendar.getInstance().getTime()));
 	}
 	
@@ -55,8 +57,8 @@ public class JsonNodeWriter {
 		return gson.toJson(jsonTree);
 	}
 	
-	public void writeTree(String strategyName, Tree tree) {
-		File file = new File(createFileName(strategyName));
+	public void writeTree(String pathPrefix, String strategyName, Tree tree) {
+		File file = new File(createFileName(pathPrefix, strategyName));
 
 		file.getParentFile().mkdirs();
 
