@@ -114,7 +114,7 @@ public class TreeMetrics {
 				+ "\n" + df.format(cyclicWordsFactor) 
 				+ "\n" + df.format(horizontality) 
 				+ "\n" + df.format(verticality)
-				+ "\n\n" + termsFoundInAgrovoc
+				+ "\n" + termsFoundInAgrovoc
 				+ "\n" + df.format(agrovocNameMatching);
 	}
 
