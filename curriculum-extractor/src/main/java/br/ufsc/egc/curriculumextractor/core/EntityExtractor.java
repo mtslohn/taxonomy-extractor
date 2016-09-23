@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
-import br.ufsc.egc.curriculumextractor.EntityExtractorTest;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.util.Span;
@@ -21,7 +20,7 @@ import opennlp.tools.util.Span;
  */
 public class EntityExtractor {
 
-	private final static Logger LOGGER = Logger.getLogger(EntityExtractorTest.class);
+	private final static Logger LOGGER = Logger.getLogger(EntityExtractor.class);
 	
 	private static final String NER_MODEL_FILE = "corpus/pt-ner.bin";
 	
