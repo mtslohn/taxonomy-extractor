@@ -16,16 +16,17 @@ import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import br.ufsc.egc.curriculumextractor.util.constants.EntityExtractorConstants;
 import gnu.trove.map.TObjectIntMap;
 
-public class CurriculumCoocurrenceBatchExecutor {
+public class CurriculumCoocurrenceFilteredBatchExecutor {
 	
-	private static final String PATH_PREFIX = "curriculum";
+	private static final int MIN_COOCURRENCE = 1000;
+	private static final String PATH_PREFIX = "curriculum-filtered";
 	private static final int READ_LINES_LIMIT = EntityExtractorConstants.READ_LINES_LIMIT;
 	private static final boolean EXTRACT_ENTITIES_ON_RUNTIME = false;
 	
 	private static final int[] ENTITY_THRESHOLD_ARRAY = {1000, 800, 500, 300, 100};
 	private static final int[] LEVELS_ARRAY = {1, 2, 3};
 
-	private static final Logger LOGGER = Logger.getLogger(CurriculumCoocurrenceBatchExecutor.class); 
+	private static final Logger LOGGER = Logger.getLogger(CurriculumCoocurrenceFilteredBatchExecutor.class); 
 
 	public static void main(String[] args) throws RemoteException, NotBoundException {
 		
@@ -58,7 +59,7 @@ public class CurriculumCoocurrenceBatchExecutor {
 				
 				LOGGER.info("Iniciando execução com entityThreshold de " + entityThreshold + " e levels de " + levels + ".");
 				
-				ApproachResponse approachResponse = approach.createTree(numberOfTokens, recognizedTokens, 1);
+				ApproachResponse approachResponse = approach.createTree(numberOfTokens, recognizedTokens, MIN_COOCURRENCE);
 				Tree tree = approachResponse.getTree();
 				TreeWriter treeWriter = new TreeWriter();
 				String fileName = String.format("%s lines - %s entityThreshold - %s levels", READ_LINES_LIMIT, entityThreshold, levels);

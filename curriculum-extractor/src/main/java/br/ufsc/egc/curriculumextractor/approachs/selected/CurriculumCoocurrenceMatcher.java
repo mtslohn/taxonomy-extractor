@@ -8,31 +8,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ahocorasick.trie.Trie;
 import org.apache.log4j.Logger;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
 import br.ufsc.egc.curriculumextractor.approachs.AbstractEntityCurriculumMatcher;
-import br.ufsc.egc.curriculumextractor.approachs.HierarchicApproach;
 import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
 import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
 import br.ufsc.egc.curriculumextractor.model.EntityPair;
 import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
 import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
-import br.ufsc.egc.curriculumextractor.model.json.util.JsonNodeWriter;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import br.ufsc.egc.curriculumextractor.util.NERMetrics;
-import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 import gnu.trove.map.TObjectIntMap;
 
 // Eh hierarquico
 public class CurriculumCoocurrenceMatcher extends
-		AbstractEntityCurriculumMatcher implements HierarchicApproach {
+		AbstractEntityCurriculumMatcher {
 
 	private static final int DEFAULT_LEVELS = 1;
 
@@ -125,7 +121,7 @@ public class CurriculumCoocurrenceMatcher extends
 		
 	}
 
-	public ApproachResponse createTree(int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
+	public ApproachResponse createTree(int numberOfTokens, int recognizedTokens, int minimumCoocurrence) throws RemoteException, NotBoundException {
 
 		// ja tenho as relacoes e a frequencia delas... agora eh hora de montar
 		// a arvore
@@ -145,10 +141,13 @@ public class CurriculumCoocurrenceMatcher extends
 						+ keyList.size());
 			}
 			EntityPair pair = keyList.get(index);
-			findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(),
-					pair.getEntity2());
-			findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(),
-					pair.getEntity1());
+			LOGGER.debug("Coocurrence: " + coocurrenceManager.getPairsCoocurrence().get(pair));
+			if (coocurrenceManager.getPairsCoocurrence().get(pair) >= minimumCoocurrence) {
+				findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(),
+						pair.getEntity2());
+				findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(),
+						pair.getEntity1());
+			}
 		}
 
 		TokenStatistics statistics = countUsedTokens(tree, entitiesAndCount);
@@ -176,17 +175,6 @@ public class CurriculumCoocurrenceMatcher extends
 			fatherTerm = fatherTerm.getParent();
 		}
 		addToTree(tree, fatherTerm.getLabel(), sonLabel);
-	}
-
-	@Override
-	public void writeTree(int entityThreshold, TObjectIntMap<String> entitiesAndCount, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
-		ApproachResponse approachResponse = createTree(numberOfTokens, recognizedTokens);
-		Tree tree = approachResponse.getTree();
-		TreeWriter treeWriter = new TreeWriter();
-		String fileName = String.format("Curriculum Coocurrence - %s entityThreshold - %s levels", entityThreshold, this.getLevels());
-		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
-		JsonNodeWriter jsonWriter = new JsonNodeWriter();
-		jsonWriter.writeTree(fileName, tree);
 	}
 
 }
