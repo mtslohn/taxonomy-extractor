@@ -170,8 +170,7 @@ public class CurriculumCoocurrenceMatcher extends
 
 	private void addHierarchy(Tree tree, String sonLabel, Term fatherTerm) {
 		while (fatherTerm.getParent() != null) {
-			addToTree(tree, fatherTerm.getLabel(), fatherTerm.getParent()
-					.getLabel());
+			addToTree(tree, fatherTerm.getLabel(), fatherTerm.getParent().getLabel());
 			fatherTerm = fatherTerm.getParent();
 		}
 		addToTree(tree, fatherTerm.getLabel(), sonLabel);

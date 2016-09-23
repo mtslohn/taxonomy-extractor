@@ -20,8 +20,7 @@ import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 import gnu.trove.map.TObjectIntMap;
 
 // Eh hierarquico
-public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher
-		implements HierarchicApproach {
+public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
 
 	private static final int DEFAULT_LEVELS = 3;
 
@@ -40,7 +39,6 @@ public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher
 		this.levels = levels;
 	}
 
-	@Override
 	public int getLevels() {
 		return levels;
 	}
@@ -91,19 +89,6 @@ public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher
 			fatherTerm = fatherTerm.getParent();
 		}
 		addToTree(tree, fatherTerm.getLabel(), sonLabel);
-	}
-
-	public static void main(String[] args) throws RemoteException, NotBoundException {
-		new CorpusCoocurrenceMatcher().writeTree();
-	}
-
-	@Override
-	public void writeTree(int entityThreshold, TObjectIntMap<String> entitiesAndCount, int numberOfTokens, int recognizedTokens) throws RemoteException, NotBoundException {
-		ApproachResponse approachResponse = createTree(entitiesAndCount, numberOfTokens, recognizedTokens);
-		Tree tree = approachResponse.getTree();
-		TreeWriter treeWriter = new TreeWriter();
-		String fileName = String.format("Corpus Coocurrence - %s entityThreshold - %s levels", entityThreshold, this.getLevels());
-		treeWriter.write(fileName, approachResponse.getNerMetrics(), approachResponse.getCyclicWords(), tree);
 	}
 
 }
