@@ -94,29 +94,35 @@ public abstract class AbstractEntityCurriculumMatcher {
 			createTokenStatistics(wordsSum, wordsCount, root, entitiesAndCount);
 		}
 
-		int count = 0;
+		int tokenCount = 0;
 		
 		Set<String> cyclicWords = new HashSet<String>();
 
 		for (Object word : wordsCount.keys()) {
-			count += ((String) word).split(BLANKSPACE).length;
+//			tokenCount += ((String) word).split(BLANKSPACE).length;
 			if (wordsCount.get(word) > 1) {
 				cyclicWords.add((String) word);
 			}
 		}
+		
+		for (String entity : entitiesAndCount.keySet()) {
+			int thisTermCount = entitiesAndCount.get(entity);
+			tokenCount = entity.split(BLANKSPACE).length * thisTermCount;
+			tokenCount += thisTermCount;
+		}
 
-		return new TokenStatistics(count, cyclicWords);
+		return new TokenStatistics(tokenCount, cyclicWords);
 
 	}
 
-	private void createTokenStatistics(TObjectIntHashMap<String> wordsSum, TObjectIntHashMap<String> wordsCount, Term root, TObjectIntMap<String> entitiesAndCount) {
+	private void createTokenStatistics(TObjectIntHashMap<String> wordsSum, TObjectIntHashMap<String> wordsCount, Term thisTerm, TObjectIntMap<String> entitiesAndCount) {
 		
-		int factor = entitiesAndCount.get(root.getLabel());
+		int factor = entitiesAndCount.get(thisTerm.getLabel());
 		
 		if (factor == 0) {
 			
 			FindCaseInsensitiveProcedure procedure = new FindCaseInsensitiveProcedure();
-			procedure.setSearchKey(root.getLabel());
+			procedure.setSearchKey(thisTerm.getLabel());
 			entitiesAndCount.forEachKey(procedure);
 
 			if (procedure.getFoundKey() != null) {
@@ -125,10 +131,10 @@ public abstract class AbstractEntityCurriculumMatcher {
 			
 		}
 		
-		wordsSum.put(root.getLabel(), factor);
-		wordsCount.adjustOrPutValue(root.getLabel(), 1, 1);
+		wordsSum.put(thisTerm.getLabel(), factor);
+		wordsCount.adjustOrPutValue(thisTerm.getLabel(), 1, 1);
 		
-		for (Term son: root.getSons()) {
+		for (Term son: thisTerm.getSons()) {
 			createTokenStatistics(wordsSum, wordsCount, son, entitiesAndCount);
 		}
 	}
