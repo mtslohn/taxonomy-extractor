@@ -3,6 +3,7 @@ package br.ufsc.egc.curriculumextractor.approachs.selected;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import br.ufsc.egc.curriculumextractor.util.NERMetrics;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 // Eh hierarquico
 public class CurriculumCoocurrenceMatcher extends
@@ -135,6 +137,8 @@ public class CurriculumCoocurrenceMatcher extends
 		List<EntityPair> keyList = new ArrayList<EntityPair>(coocurrenceManager
 				.getPairsCoocurrence().keySet());
 
+		Set<String> usedEntities = new HashSet<String>();
+
 		for (int index = 0; index < keyList.size(); index++) {
 			if (index % 1000 == 0) {
 				LOGGER.info("Procurando hierarquias para o par " + index + "/"
@@ -144,25 +148,33 @@ public class CurriculumCoocurrenceMatcher extends
 			LOGGER.debug("Coocurrence: " + coocurrenceManager.getPairsCoocurrence().get(pair));
 			if (coocurrenceManager.getPairsCoocurrence().get(pair) >= minimumCoocurrence) {
 				findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(),
-						pair.getEntity2());
+						pair.getEntity2(), usedEntities);
 				findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(),
-						pair.getEntity1());
+						pair.getEntity1(), usedEntities);
 			}
 		}
+		
+		TObjectIntMap<String> usedEntitiesAndCount = new TObjectIntHashMap<String>();
+		
+		for (String usedEntity: usedEntities) {
+			usedEntitiesAndCount.put(usedEntity, entitiesAndCount.get(usedEntity));
+		}
 
-		TokenStatistics statistics = countUsedTokens(tree, entitiesAndCount);
+		TokenStatistics statistics = countUsedTokens(tree, usedEntitiesAndCount);
 		NERMetrics nerMetrics = new NERMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens());
 		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 
 	}
 
 	private void findAndAddHierarchy(DBPediaServiceInterface dbPediaService,
-			Tree tree, String sonLabel, String fatherLabel)
+			Tree tree, String sonLabel, String fatherLabel, Set<String> usedEntities)
 			throws RemoteException {
 		Term hierarchy = dbPediaService.findTree(sonLabel, getLevels());
 		if (hierarchy != null) {
 			Term result = hierarchy.find(fatherLabel, true);
 			if (result != null) {
+				usedEntities.add(sonLabel);
+				usedEntities.add(fatherLabel);
 				addHierarchy(tree, sonLabel, result);
 			}
 		}

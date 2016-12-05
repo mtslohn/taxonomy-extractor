@@ -5,7 +5,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.ufsc.egc.curriculumextractor.approachs.AbstractEntityCurriculumMatcher;
 import br.ufsc.egc.curriculumextractor.approachs.HierarchicApproach;
@@ -18,6 +20,7 @@ import br.ufsc.egc.curriculumextractor.util.TreeWriter;
 import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
 import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
 import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 // Eh hierarquico
 public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
@@ -53,6 +56,8 @@ public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
 		
 		List<String> entities = new ArrayList<String>(entitiesAndCount.keySet());
 
+		Set<String> usedEntities = new HashSet<String>();
+
 		DBPediaServiceInterface dbPedia = getDBPedia();
 
 		for (int index = 0; index < entities.size(); index++) {
@@ -62,12 +67,20 @@ public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
 				String innerEntity = entities.get(innerIndex);
 				Term result = hierarchy.find(innerEntity, true);
 				if (result != null) {
+					usedEntities.add(entity);
+					usedEntities.add(innerEntity);
 					addHierarchy(tree, entity, result);
 				}
 			}
 		}
+		
+		TObjectIntMap<String> usedEntitiesAndCount = new TObjectIntHashMap<String>();
+		
+		for (String usedEntity: usedEntities) {
+			usedEntitiesAndCount.put(usedEntity, entitiesAndCount.get(usedEntity));
+		}
 
-		TokenStatistics statistics = countUsedTokens(tree, entitiesAndCount);
+		TokenStatistics statistics = countUsedTokens(tree, usedEntitiesAndCount);
 		NERMetrics nerMetrics = new NERMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens());
 		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 		
