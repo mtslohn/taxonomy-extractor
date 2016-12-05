@@ -107,7 +107,7 @@ public abstract class AbstractEntityCurriculumMatcher {
 		
 		for (String entity : entitiesAndCount.keySet()) {
 			int thisTermCount = entitiesAndCount.get(entity);
-			tokenCount = entity.split(BLANKSPACE).length * thisTermCount;
+			thisTermCount = entity.split(BLANKSPACE).length * thisTermCount;
 			tokenCount += thisTermCount;
 		}
 
