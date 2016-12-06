@@ -65,11 +65,13 @@ public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
 			Term hierarchy = dbPedia.findTree(entity, getLevels());
 			for (int innerIndex = 0; innerIndex < entities.size(); innerIndex++) {
 				String innerEntity = entities.get(innerIndex);
-				Term result = hierarchy.find(innerEntity, true);
-				if (result != null) {
-					usedEntities.add(entity);
-					usedEntities.add(innerEntity);
-					addHierarchy(tree, entity, result);
+				if (!entity.equalsIgnoreCase(innerEntity)) { // previne que se adicione a hierarquia do mesmo elemento
+					Term result = hierarchy.find(innerEntity, true);
+					if (result != null) {
+						usedEntities.add(entity);
+						usedEntities.add(innerEntity);
+						addHierarchy(tree, entity, result);
+					}
 				}
 			}
 		}
