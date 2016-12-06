@@ -146,7 +146,7 @@ public class CurriculumCoocurrenceMatcher extends
 			}
 			EntityPair pair = keyList.get(index);
 			LOGGER.debug("Coocurrence: " + coocurrenceManager.getPairsCoocurrence().get(pair));
-			if (coocurrenceManager.getPairsCoocurrence().get(pair) >= minimumCoocurrence) {
+			if (!pair.getEntity1().equalsIgnoreCase(pair.getEntity2()) && coocurrenceManager.getPairsCoocurrence().get(pair) >= minimumCoocurrence) {
 				findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(),
 						pair.getEntity2(), usedEntities);
 				findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(),
