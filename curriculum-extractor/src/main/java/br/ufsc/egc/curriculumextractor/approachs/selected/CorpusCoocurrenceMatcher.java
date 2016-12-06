@@ -81,7 +81,7 @@ public class CorpusCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
 		}
 
 		TokenStatistics statistics = countUsedTokens(tree, usedEntitiesAndCount);
-		NERMetrics nerMetrics = new NERMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens());
+		NERMetrics nerMetrics = new NERMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens(), usedEntities);
 		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
 		
 	}
