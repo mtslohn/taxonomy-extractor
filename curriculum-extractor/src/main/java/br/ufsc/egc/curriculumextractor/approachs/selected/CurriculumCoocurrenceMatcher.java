@@ -1,8 +1,12 @@
 package br.ufsc.egc.curriculumextractor.approachs.selected;
 
+import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -10,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 
@@ -75,7 +81,9 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 			correlationsFile = File.createTempFile("correlations", String.valueOf(Math.random() * 100000000));
 			correlationsFile.deleteOnExit();
 			
-			RandomAccessFile raf = new RandomAccessFile(correlationsFile, "rw");
+			FileOutputStream fos = new FileOutputStream(correlationsFile);
+			GZIPOutputStream gzos = new GZIPOutputStream(fos);
+			ObjectOutputStream oos = new ObjectOutputStream(gzos);
 
 			for (Integer curriculumKey : curriculumMap.keySet()) {
 				if (curriculumKey % 100 == 0) {
@@ -104,29 +112,49 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 				}
 
 				if (!correlation.getPairs().isEmpty()) {
-					correlation.writeExternal(raf);
+					correlation.writeExternal(oos);
 				}
 
 			}
 
 			coocurrenceManager = new EntityPairCoocurrenceManager();
-
-			int index = 0;
-			raf.seek(0);
 			
-			while (raf.getFilePointer() < raf.length()) {
+			oos.flush();
+			gzos.flush();
+			fos.flush();
+
+			oos.close();
+			gzos.close();
+			fos.close();
+			
+			int index = 0;
+			
+			FileInputStream fis = new FileInputStream(correlationsFile);
+			GZIPInputStream gzis = new GZIPInputStream(fis);
+			ObjectInputStream ois = new ObjectInputStream(gzis);
+			
+			boolean eof = false;
+
+			while (!eof) {
 				if (index % 1000 == 0) {
 					LOGGER.info("Processando correlações para o par " + index);
 				}
 				CurriculumCorrelation correlation = new CurriculumCorrelation();
-				correlation.readExternal(raf);
-				for (EntityPair pair : correlation.getPairs()) {
-					coocurrenceManager.addPair(pair.getEntity1(), pair.getEntity2());
+
+				try {
+					correlation.readExternal(ois);
+					for (EntityPair pair : correlation.getPairs()) {
+						coocurrenceManager.addPair(pair.getEntity1(), pair.getEntity2());
+					}
+					index++;
+				} catch (EOFException e) {
+					eof = true;
 				}
-				index++;
 			}
 			
-			raf.close();
+			ois.close();
+			gzis.close();
+			fis.close();
 			
 			correlationsFile.delete();
 		} catch (IOException e) {

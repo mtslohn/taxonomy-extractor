@@ -1,11 +1,16 @@
 package br.ufsc.egc.curriculumextractor.util;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import br.ufsc.egc.agrovoc.service.AgrovocService;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 public class TreeMetrics {
 
@@ -23,6 +28,7 @@ public class TreeMetrics {
 	private double cyclicWordsFactor;
 	private double horizontality;
 	private double verticality;
+	private TObjectIntHashMap<String> usedTerms;
 	
 	// servico
 	
@@ -33,6 +39,25 @@ public class TreeMetrics {
 		this.agrovocService = AgrovocService.getInstance();
 		calculateSums(tree);
 		calculateStatistics();
+		summarizeAllUsedTerms(tree);
+	}
+
+	private void summarizeAllUsedTerms(Tree tree) {
+		usedTerms = new TObjectIntHashMap<String>();
+		summarizeAllUsedTerms(usedTerms, tree);
+	}
+
+	private void summarizeAllUsedTerms(TObjectIntHashMap<String> usedTerms, Tree tree) {
+		for (Term root: tree.getRoots()) {
+			summarizeAllUsedTerms(usedTerms, root);
+		}
+	}
+
+	private void summarizeAllUsedTerms(TObjectIntHashMap<String> usedTerms, Term term) {
+		usedTerms.adjustOrPutValue(term.getLabel(), 1, 1);
+		for (Term son: term.getSons()) {
+			summarizeAllUsedTerms(usedTerms, son);
+		}
 	}
 
 	private void calculateStatistics() {
@@ -91,6 +116,23 @@ public class TreeMetrics {
 
 	public String print() {
 		DecimalFormat df = new DecimalFormat("0.000");
+		
+		StringBuilder sbUsedTerms = new StringBuilder();
+		List<String> orderedUsedTerms = new ArrayList<String>();
+		orderedUsedTerms.addAll(usedTerms.keySet());
+		Collections.sort(orderedUsedTerms);
+		Iterator<String> itOrderedUsedTerms = orderedUsedTerms.iterator();
+		
+		while (itOrderedUsedTerms.hasNext()) {
+			String term = itOrderedUsedTerms.next();
+			sbUsedTerms.append(term);
+			sbUsedTerms.append("[" + usedTerms.get(term) +"]");
+			if (itOrderedUsedTerms.hasNext()) {
+				sbUsedTerms.append(", ");
+			}
+		}
+		
+		
 		return "nodeCount=" + nodeCount 
 				+ "\nmaxLevel=" + maxLevel 
 				+ "\nexpansions=" + expansions 
@@ -102,7 +144,8 @@ public class TreeMetrics {
 				+ "\nhorizontality=" + df.format(horizontality) 
 				+ "\nverticality=" + df.format(verticality)
 				+ "\n\ntermsFoundInAgrovoc=" + termsFoundInAgrovoc
-				+ "\nagrovocNameMatching=" + df.format(agrovocNameMatching) + 
+				+ "\nagrovocNameMatching=" + df.format(agrovocNameMatching)
+				+ "\nusedTerms=" + sbUsedTerms +
 				
 				"\n\n" + nodeCount 
 				+ "\n" + maxLevel 

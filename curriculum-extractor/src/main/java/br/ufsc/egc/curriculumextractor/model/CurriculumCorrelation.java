@@ -1,16 +1,15 @@
 package br.ufsc.egc.curriculumextractor.model;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.mapdb.Serializer;
+public class CurriculumCorrelation {
 
-public class CurriculumCorrelation implements Serializable {
-
-	private static final long serialVersionUID = 1L;
-	
 	private int curriculumId;
 	private List<EntityPair> pairs = new ArrayList<EntityPair>();
 
@@ -45,6 +44,46 @@ public class CurriculumCorrelation implements Serializable {
 		}
 		output.append("]");
 		return output.toString();
+	}
+
+	public void writeExternal(RandomAccessFile raf) throws IOException {
+		raf.writeInt(curriculumId);
+		raf.writeInt(pairs.size());
+		for (EntityPair pair : pairs) {
+			raf.writeUTF(pair.getEntity1());
+			raf.writeUTF(pair.getEntity2());
+		}
+	}
+	
+	public void writeExternal(ObjectOutputStream out) throws IOException {
+		out.writeInt(curriculumId);
+		out.writeInt(pairs.size());
+		for (EntityPair pair : pairs) {
+			out.writeUTF(pair.getEntity1());
+			out.writeUTF(pair.getEntity2());
+		}
+	}
+	
+	public void readExternal(RandomAccessFile raf) throws IOException {
+		curriculumId = raf.readInt();
+		int pairsAmount = raf.readInt();
+		for (int pairNumber = 0; pairNumber < pairsAmount; pairNumber++) {
+			EntityPair pair = new EntityPair();
+			pair.setEntity1(raf.readUTF());
+			pair.setEntity2(raf.readUTF());
+			pairs.add(pair);
+		}
+	}
+	
+	public void readExternal(ObjectInputStream in) throws IOException {
+		curriculumId = in.readInt();
+		int pairsAmount = in.readInt();
+		for (int pairNumber = 0; pairNumber < pairsAmount; pairNumber++) {
+			EntityPair pair = new EntityPair();
+			pair.setEntity1(in.readUTF());
+			pair.setEntity2(in.readUTF());
+			pairs.add(pair);
+		}
 	}
 
 }
