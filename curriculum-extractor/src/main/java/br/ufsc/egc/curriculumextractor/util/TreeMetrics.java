@@ -26,11 +26,14 @@ public class TreeMetrics {
 	
 	// servico
 	
+	private NERMetrics nerMetrics;
+	
 	private AgrovocService agrovocService;
 
-	public TreeMetrics(Tree tree, Set<String> cyclicWords) {
+	public TreeMetrics(Tree tree, NERMetrics nerMetrics, Set<String> cyclicWords) {
 		this.cyclicWords = cyclicWords;
 		this.agrovocService = AgrovocService.getInstance();
+		this.nerMetrics = nerMetrics;
 		calculateSums(tree);
 		calculateStatistics();
 	}
@@ -104,7 +107,9 @@ public class TreeMetrics {
 				+ "\n\ntermsFoundInAgrovoc=" + termsFoundInAgrovoc
 				+ "\nagrovocNameMatching=" + df.format(agrovocNameMatching) + 
 				
-				"\n\n" + nodeCount 
+				"\n\n" + nerMetrics.getUsedTokens()
+				+ "\n" + df.format(nerMetrics.getUsedTokensFactor())
+				+ "\n" + nodeCount 
 				+ "\n" + maxLevel 
 				+ "\n" + expansions 
 				+ "\n" + expansionSum 
@@ -115,7 +120,22 @@ public class TreeMetrics {
 				+ "\n" + df.format(horizontality) 
 				+ "\n" + df.format(verticality)
 				+ "\n" + termsFoundInAgrovoc
-				+ "\n" + df.format(agrovocNameMatching);
+				+ "\n" + df.format(agrovocNameMatching) +
+		
+				"\n\n" + nerMetrics.getUsedTokens()
+				+ "\t" + df.format(nerMetrics.getUsedTokensFactor())
+				+ "\t" + nodeCount 
+				+ "\t" + maxLevel 
+				+ "\t" + expansions 
+				+ "\t" + expansionSum 
+				+ "\t" + df.format(expansionFactorAvg)
+				+ "\t" + df.format(termLevelAvg) 
+				+ "\t" + cyclicWordsNumber 
+				+ "\t" + df.format(cyclicWordsFactor) 
+				+ "\t" + df.format(horizontality) 
+				+ "\t" + df.format(verticality)
+				+ "\t" + termsFoundInAgrovoc
+				+ "\t" + df.format(agrovocNameMatching);
 	}
 
 }

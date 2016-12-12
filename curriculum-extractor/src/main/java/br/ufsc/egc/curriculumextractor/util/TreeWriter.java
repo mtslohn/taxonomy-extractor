@@ -30,7 +30,7 @@ public class TreeWriter {
 			fileWriter = new FileWriter(file);
 			buffWriter = new BufferedWriter(fileWriter);
 
-			TreeMetrics metrics = new TreeMetrics(tree, cyclicWords);
+			TreeMetrics metrics = new TreeMetrics(tree, nerMetrics, cyclicWords);
 
 			buffWriter.write(nerMetrics.print());
 			buffWriter.write(SPACER);
