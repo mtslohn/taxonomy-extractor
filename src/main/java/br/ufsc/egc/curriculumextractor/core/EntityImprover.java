@@ -12,7 +12,7 @@ import java.util.Map;
 import opennlp.tools.util.Span;
 
 import org.apache.lucene.analysis.pt.PortugueseAnalyzer;
-import org.apache.lucene.analysis.util.CharArraySet;
+import org.apache.lucene.analysis.CharArraySet;
 
 public class EntityImprover {
 

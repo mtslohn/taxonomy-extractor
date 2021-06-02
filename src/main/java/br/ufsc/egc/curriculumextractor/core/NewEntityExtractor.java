@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.pt.PortugueseAnalyzer;
-import org.apache.lucene.analysis.util.CharArraySet;
+import org.apache.lucene.analysis.CharArraySet;
 
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
 import gnu.trove.map.hash.TObjectIntHashMap;
