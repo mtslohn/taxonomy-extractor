@@ -1,6 +1,7 @@
 # taxonomy-extractor
 
-This project is part of my Master's degree thesis. Originally developed over JDK 6.
+This project is part of my Master's degree thesis. Originally developed over JDK 6. Should be compatible with JDK 8
+distributions.
 
 ### Requirements
 
