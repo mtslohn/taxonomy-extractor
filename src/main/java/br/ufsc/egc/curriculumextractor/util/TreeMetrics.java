@@ -1,16 +1,15 @@
 package br.ufsc.egc.curriculumextractor.util;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import br.ufsc.egc.agrovoc.factory.AgrovocServiceFactoryImpl;
 import br.ufsc.egc.agrovoc.service.AgrovocService;
+import br.ufsc.egc.curriculumextractor.model.entities.ApproachEntityRecognitionMetrics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
 import gnu.trove.map.hash.TObjectIntHashMap;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.*;
 
 public class TreeMetrics {
 
@@ -29,16 +28,16 @@ public class TreeMetrics {
 	private double horizontality;
 	private double verticality;
 	private TObjectIntHashMap<String> usedTerms;
-	
+
 	// servico
-	
-	private NERMetrics nerMetrics;
-	
+
+	private ApproachEntityRecognitionMetrics nerMetrics;
+
 	private AgrovocService agrovocService;
 
-	public TreeMetrics(Tree tree, NERMetrics nerMetrics, Set<String> cyclicWords) {
+	public TreeMetrics(Tree tree, ApproachEntityRecognitionMetrics nerMetrics, Set<String> cyclicWords) throws IOException {
 		this.cyclicWords = cyclicWords;
-		this.agrovocService = AgrovocService.getInstance();
+		this.agrovocService = new AgrovocServiceFactoryImpl().buildFromProperties();
 		this.nerMetrics = nerMetrics;
 		calculateSums(tree);
 		calculateStatistics();

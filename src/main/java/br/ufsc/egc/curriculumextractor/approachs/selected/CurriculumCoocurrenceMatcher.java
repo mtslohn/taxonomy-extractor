@@ -1,38 +1,21 @@
 package br.ufsc.egc.curriculumextractor.approachs.selected;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import org.apache.log4j.Logger;
-
 import br.ufsc.egc.curriculumextractor.CurriculumListReader;
 import br.ufsc.egc.curriculumextractor.approachs.AbstractEntityCurriculumMatcher;
-import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
-import br.ufsc.egc.curriculumextractor.model.CurriculumCorrelation;
-import br.ufsc.egc.curriculumextractor.model.EntityPair;
-import br.ufsc.egc.curriculumextractor.model.EntityPairCoocurrenceManager;
-import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
+import br.ufsc.egc.curriculumextractor.model.*;
+import br.ufsc.egc.curriculumextractor.model.entities.ApproachEntityRecognitionMetrics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import br.ufsc.egc.curriculumextractor.util.NERMetrics;
-import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceInterface;
-import br.ufsc.egc.dbpedia.reader.service.impl.DBPediaServiceImpl;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import org.apache.log4j.Logger;
+
+import java.io.*;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 // Eh hierarquico
 public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatcher {
@@ -43,17 +26,16 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 
 	private int levels;
 	private Map<Integer, String> curriculumMap;
-
 	private EntityPairCoocurrenceManager coocurrenceManager;
-
 	private List<String> entities;
-
 	private TObjectIntMap<String> entitiesAndCount;
+	private DBPediaService dbPediaService;
 
-	public CurriculumCoocurrenceMatcher(int lineLimit) {
+	public CurriculumCoocurrenceMatcher(int lineLimit) throws IOException {
 		setLevels(DEFAULT_LEVELS);
 		CurriculumListReader curriculumListReader = new CurriculumListReader();
 		curriculumMap = curriculumListReader.read(lineLimit);
+		dbPediaService = getDBPediaService();
 	}
 
 	public int getLevels() {
@@ -62,10 +44,6 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 
 	public void setLevels(int levels) {
 		this.levels = levels;
-	}
-
-	public ApproachResponse createTree() {
-		throw new RuntimeException("Não suportado!!!");
 	}
 
 	public void prepareForEntities(TObjectIntMap<String> entitiesAndCount) {
@@ -80,7 +58,7 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 
 			correlationsFile = File.createTempFile("correlations", String.valueOf(Math.random() * 100000000));
 			correlationsFile.deleteOnExit();
-			
+
 			FileOutputStream fos = new FileOutputStream(correlationsFile);
 			GZIPOutputStream gzos = new GZIPOutputStream(fos);
 			ObjectOutputStream oos = new ObjectOutputStream(gzos);
@@ -118,7 +96,7 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 			}
 
 			coocurrenceManager = new EntityPairCoocurrenceManager();
-			
+
 			oos.flush();
 			gzos.flush();
 			fos.flush();
@@ -126,13 +104,13 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 			oos.close();
 			gzos.close();
 			fos.close();
-			
+
 			int index = 0;
-			
+
 			FileInputStream fis = new FileInputStream(correlationsFile);
 			GZIPInputStream gzis = new GZIPInputStream(fis);
 			ObjectInputStream ois = new ObjectInputStream(gzis);
-			
+
 			boolean eof = false;
 
 			while (!eof) {
@@ -151,11 +129,11 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 					eof = true;
 				}
 			}
-			
+
 			ois.close();
 			gzis.close();
 			fis.close();
-			
+
 			correlationsFile.delete();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -165,13 +143,11 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 	}
 
 	public ApproachResponse createTree(int numberOfTokens, int recognizedTokens, int minimumCoocurrence)
-			throws RemoteException, NotBoundException {
+			throws RemoteException {
 
 		// ja tenho as relacoes e a frequencia delas... agora eh hora de montar
 		// a arvore
 		// TODO colocar na tree as relacoes descobertas e validadas na DBPedia
-
-		DBPediaServiceInterface dbPediaService = DBPediaServiceImpl.getInstance();
 
 		Tree tree = new Tree();
 
@@ -187,8 +163,8 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 			LOGGER.debug("Coocurrence: " + coocurrenceManager.getPairsCoocurrence().get(pair));
 			if (!pair.getEntity1().equalsIgnoreCase(pair.getEntity2())
 					&& coocurrenceManager.getPairsCoocurrence().get(pair) >= minimumCoocurrence) {
-				findAndAddHierarchy(dbPediaService, tree, pair.getEntity1(), pair.getEntity2(), usedEntities);
-				findAndAddHierarchy(dbPediaService, tree, pair.getEntity2(), pair.getEntity1(), usedEntities);
+				findAndAddHierarchy(tree, pair.getEntity1(), pair.getEntity2(), usedEntities);
+				findAndAddHierarchy(tree, pair.getEntity2(), pair.getEntity1(), usedEntities);
 			}
 		}
 
@@ -199,14 +175,14 @@ public class CurriculumCoocurrenceMatcher extends AbstractEntityCurriculumMatche
 		}
 
 		TokenStatistics statistics = countUsedTokens(tree, usedEntitiesAndCount);
-		NERMetrics nerMetrics = new NERMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens(),
+		ApproachEntityRecognitionMetrics approachNerMetrics = new ApproachEntityRecognitionMetrics(numberOfTokens, recognizedTokens, statistics.getUsedTokens(),
 				usedEntities);
-		return new ApproachResponse(tree, entities, nerMetrics, statistics.getCyclicWords());
+		return new ApproachResponse(tree, entities, approachNerMetrics, statistics.getCyclicWords());
 
 	}
 
-	private void findAndAddHierarchy(DBPediaServiceInterface dbPediaService, Tree tree, String sonLabel,
-			String fatherLabel, Set<String> usedEntities) throws RemoteException {
+	private void findAndAddHierarchy(Tree tree, String sonLabel,
+	                                 String fatherLabel, Set<String> usedEntities) throws RemoteException {
 		Term hierarchy = dbPediaService.findTree(sonLabel, getLevels());
 		if (hierarchy != null) {
 			Term result = hierarchy.find(fatherLabel, true);

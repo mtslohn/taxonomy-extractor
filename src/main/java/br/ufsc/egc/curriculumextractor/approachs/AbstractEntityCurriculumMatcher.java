@@ -1,5 +1,18 @@
 package br.ufsc.egc.curriculumextractor.approachs;
 
+import br.ufsc.egc.curriculumextractor.conf.PropertyLoader;
+import br.ufsc.egc.curriculumextractor.conf.ServiceProperty;
+import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
+import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
+import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaService;
+import br.ufsc.egc.dbpedia.reader.service.DBPediaServiceFactoryImpl;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+import gnu.trove.procedure.TObjectProcedure;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
@@ -7,45 +20,35 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
-import br.ufsc.egc.curriculumextractor.model.ApproachResponse;
-import br.ufsc.egc.curriculumextractor.model.TokenStatistics;
-import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
-import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
-import gnu.trove.procedure.TObjectProcedure;
-
 public abstract class AbstractEntityCurriculumMatcher {
-	
+
 	private static final int ENTITY_THRESHOLD = 3;
 	private static final Logger LOGGER = Logger.getLogger(AbstractEntityCurriculumMatcher.class);
 	private static final String BLANKSPACE = " ";
-	
+
+	public AbstractEntityCurriculumMatcher() {
+		super();
+	}
+
 	protected static Map<String, Integer> getFilteredMap(Map<String, Integer> entitiesCount) {
 		return getFilteredMap(entitiesCount, ENTITY_THRESHOLD);
 	}
-	
+
 	protected static Map<String, Integer> getFilteredMap(Map<String, Integer> entitiesCount, int entityThreshold) {
-	
+
 		LinkedHashMap<String, Integer> entitiesCountCleanMap = new LinkedHashMap<String, Integer>();
-	
+
 		for (String key : entitiesCount.keySet()) {
 			if (entitiesCount.get(key) < entityThreshold) {
 				continue;
 			}
 			entitiesCountCleanMap.put(key, entitiesCount.get(key));
 		}
-	
+
 		return entitiesCountCleanMap;
-	
+
 	}
 
-	public AbstractEntityCurriculumMatcher() {
-		super();
-	}
-	
 	public static void addToTree(Tree tree, String broader, String narrower) {
 		if (broader.equalsIgnoreCase(narrower)) {
 			LOGGER.debug("Tentativa de inserir pai e filhos iguais. Abortando...");
@@ -53,17 +56,17 @@ public abstract class AbstractEntityCurriculumMatcher {
 		}
 
 		Term term = tree.find(broader);
-		
+
 		if (term == null) {
-		
+
 			term = new Term();
 			term.setLabel(broader);
 			tree.addRoot(term);
-		
+
 		} else {
 
 			Term broaderParentIterator = term.getParent();
-			
+
 			while (broaderParentIterator != null) {
 				if (broaderParentIterator.getLabel().equalsIgnoreCase(narrower)) {
 					LOGGER.debug("Tentativa de inserir filho que já existe como pai. Abortando...");
@@ -71,31 +74,29 @@ public abstract class AbstractEntityCurriculumMatcher {
 				}
 				broaderParentIterator = broaderParentIterator.getParent();
 			}
-			
+
 		}
-		
+
 		Term sonTerm = new Term();
 		sonTerm.setLabel(narrower);
 		term.addSon(sonTerm);
 	}
-	
-	public abstract ApproachResponse createTree() throws RemoteException, NotBoundException;
-	
+
 	public void writeTree() throws RemoteException, NotBoundException {
-		
+
 		throw new RuntimeException("Não suportado!!!");
-		
+
 	}
-	
+
 	protected TokenStatistics countUsedTokens(Tree tree, TObjectIntMap<String> entitiesAndCount) {
 		TObjectIntHashMap<String> wordsSum = new TObjectIntHashMap<String>();
 		TObjectIntHashMap<String> wordsCount = new TObjectIntHashMap<String>();
-		for (Term root: tree.getRoots()) {
+		for (Term root : tree.getRoots()) {
 			createTokenStatistics(wordsSum, wordsCount, root, entitiesAndCount);
 		}
 
 		int tokenCount = 0;
-		
+
 		Set<String> cyclicWords = new HashSet<String>();
 
 		for (Object word : wordsCount.keys()) {
@@ -104,7 +105,7 @@ public abstract class AbstractEntityCurriculumMatcher {
 				cyclicWords.add((String) word);
 			}
 		}
-		
+
 		for (String entity : entitiesAndCount.keySet()) {
 			int thisTermCount = entitiesAndCount.get(entity);
 			thisTermCount = entity.split(BLANKSPACE).length * thisTermCount;
@@ -116,11 +117,11 @@ public abstract class AbstractEntityCurriculumMatcher {
 	}
 
 	private void createTokenStatistics(TObjectIntHashMap<String> wordsSum, TObjectIntHashMap<String> wordsCount, Term thisTerm, TObjectIntMap<String> entitiesAndCount) {
-		
+
 		int factor = entitiesAndCount.get(thisTerm.getLabel());
-		
+
 		if (factor == 0) {
-			
+
 			FindCaseInsensitiveProcedure procedure = new FindCaseInsensitiveProcedure();
 			procedure.setSearchKey(thisTerm.getLabel());
 			entitiesAndCount.forEachKey(procedure);
@@ -128,22 +129,30 @@ public abstract class AbstractEntityCurriculumMatcher {
 			if (procedure.getFoundKey() != null) {
 				factor = entitiesAndCount.get(procedure.getFoundKey());
 			}
-			
+
 		}
-		
+
 		wordsSum.put(thisTerm.getLabel(), factor);
 		wordsCount.adjustOrPutValue(thisTerm.getLabel(), 1, 1);
-		
-		for (Term son: thisTerm.getSons()) {
+
+		for (Term son : thisTerm.getSons()) {
 			createTokenStatistics(wordsSum, wordsCount, son, entitiesAndCount);
 		}
 	}
-	
+
+	protected DBPediaService getDBPediaService() throws IOException {
+		PropertyLoader propertyLoader = new PropertyLoader();
+		return new DBPediaServiceFactoryImpl().
+				build(propertyLoader.getProperty(ServiceProperty.DBPEDIA_TDB_SCHEMA_FOLDER),
+						propertyLoader.getProperty(ServiceProperty.DBPEDIA_FILE_CATEGORIES_LABELS),
+						propertyLoader.getProperty(ServiceProperty.DBPEDIA_FILE_CATEGORIES_SKOS));
+	}
+
 	private class FindCaseInsensitiveProcedure implements TObjectProcedure<String> {
-		
+
 		String searchKey = null;
 		String foundKey = null;
-		
+
 		@Override
 		public boolean execute(String key) {
 			if (key.equalsIgnoreCase(searchKey)) {
@@ -160,7 +169,7 @@ public abstract class AbstractEntityCurriculumMatcher {
 		public String getFoundKey() {
 			return foundKey;
 		}
-		
+
 	}
-	
+
 }

@@ -1,5 +1,8 @@
 package br.ufsc.egc.curriculumextractor.util;
 
+import br.ufsc.egc.curriculumextractor.model.entities.ApproachEntityRecognitionMetrics;
+import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,16 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Set;
 
-import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
-
 public class TreeWriter {
 
 	private static final String SPACER = "\n\n========\n\n";
 	private static final String FILE_NAME_TEMPLATE = "results/txt/%s/%s-%s.txt";
 	public static final String DATE_FORMAT = "yyyy-MM-dd.HH.mm.ss";
 
-	public void write(String pathPrefix, String strategyName, NERMetrics nerMetrics, Set<String> cyclicWords,
-			Tree tree) {
+	public void write(String pathPrefix, String strategyName, ApproachEntityRecognitionMetrics nerMetrics, Set<String> cyclicWords,
+	                  Tree tree) {
 
 		File file = new File(createFileName(pathPrefix, strategyName));
 

@@ -1,18 +1,18 @@
-package br.ufsc.egc.curriculumextractor.util;
+package br.ufsc.egc.curriculumextractor.model.entities;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class NERMetrics {
+public class ApproachEntityRecognitionMetrics {
 
 	private int numberOfTokens;
 	private int recognizedTokens;
 	private int usedTokens;
 	private Set<String> usedEntities;
 
-	public NERMetrics(int numberOfTokens, int recognizedTokens, int usedTokens, Set<String> usedEntities) {
+	public ApproachEntityRecognitionMetrics(int numberOfTokens, int recognizedTokens, int usedTokens, Set<String> usedEntities) {
 		this.numberOfTokens = numberOfTokens;
 		this.recognizedTokens = recognizedTokens;
 		this.usedTokens = usedTokens;
