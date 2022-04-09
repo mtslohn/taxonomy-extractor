@@ -2,6 +2,8 @@ package br.ufsc.egc.curriculumextractor.util;
 
 import br.ufsc.egc.agrovoc.factory.AgrovocServiceFactoryImpl;
 import br.ufsc.egc.agrovoc.service.AgrovocService;
+import br.ufsc.egc.curriculumextractor.conf.PropertyLoader;
+import br.ufsc.egc.curriculumextractor.conf.ServiceProperty;
 import br.ufsc.egc.curriculumextractor.model.entities.ApproachEntityRecognitionMetrics;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Term;
 import br.ufsc.egc.curriculumextractor.model.taxonomy.Tree;
@@ -37,7 +39,10 @@ public class TreeMetrics {
 
 	public TreeMetrics(Tree tree, ApproachEntityRecognitionMetrics nerMetrics, Set<String> cyclicWords) throws IOException {
 		this.cyclicWords = cyclicWords;
-		this.agrovocService = new AgrovocServiceFactoryImpl().buildFromProperties();
+		PropertyLoader propertyLoader = new PropertyLoader();
+		this.agrovocService = new AgrovocServiceFactoryImpl().build(
+				propertyLoader.getProperty(ServiceProperty.AGROVOC_TDB_SCHEMA_FOLDER),
+				propertyLoader.getProperty(ServiceProperty.AGROVOC_FILE_THESAURUS));
 		this.nerMetrics = nerMetrics;
 		calculateSums(tree);
 		calculateStatistics();
@@ -50,14 +55,14 @@ public class TreeMetrics {
 	}
 
 	private void summarizeAllUsedTerms(TObjectIntHashMap<String> usedTerms, Tree tree) {
-		for (Term root: tree.getRoots()) {
+		for (Term root : tree.getRoots()) {
 			summarizeAllUsedTerms(usedTerms, root);
 		}
 	}
 
 	private void summarizeAllUsedTerms(TObjectIntHashMap<String> usedTerms, Term term) {
 		usedTerms.adjustOrPutValue(term.getLabel(), 1, 1);
-		for (Term son: term.getSons()) {
+		for (Term son : term.getSons()) {
 			summarizeAllUsedTerms(usedTerms, son);
 		}
 	}
@@ -69,7 +74,7 @@ public class TreeMetrics {
 		cyclicWordsFactor = cyclicWordsNumber / (nodeCount * 1.0);
 		horizontality = maxLevel / (nodeCount * 1.0);
 		verticality = nodeCount / (maxLevel * 1.0);
-		agrovocNameMatching = termsFoundInAgrovoc*100.0/nodeCount;
+		agrovocNameMatching = termsFoundInAgrovoc * 100.0 / nodeCount;
 	}
 
 	private void calculateSums(Tree tree) {
@@ -118,63 +123,63 @@ public class TreeMetrics {
 
 	public String print() {
 		DecimalFormat df = new DecimalFormat("0.000");
-		
+
 		StringBuilder sbUsedTerms = new StringBuilder();
 		List<String> orderedUsedTerms = new ArrayList<String>();
 		orderedUsedTerms.addAll(usedTerms.keySet());
 		Collections.sort(orderedUsedTerms);
 		Iterator<String> itOrderedUsedTerms = orderedUsedTerms.iterator();
-		
+
 		while (itOrderedUsedTerms.hasNext()) {
 			String term = itOrderedUsedTerms.next();
 			sbUsedTerms.append(term);
-			sbUsedTerms.append("[" + usedTerms.get(term) +"]");
+			sbUsedTerms.append("[" + usedTerms.get(term) + "]");
 			if (itOrderedUsedTerms.hasNext()) {
 				sbUsedTerms.append(", ");
 			}
 		}
-		
-		
-		return "nodeCount=" + nodeCount 
-				+ "\nmaxLevel=" + maxLevel 
-				+ "\nexpansions=" + expansions 
-				+ "\nexpansionSum=" + expansionSum 
+
+
+		return "nodeCount=" + nodeCount
+				+ "\nmaxLevel=" + maxLevel
+				+ "\nexpansions=" + expansions
+				+ "\nexpansionSum=" + expansionSum
 				+ "\nexpansionFactorAvg=" + df.format(expansionFactorAvg)
-				+ "\ntermLevelAvg=" + df.format(termLevelAvg) 
-				+ "\ncyclicWordsNumber=" + cyclicWordsNumber 
-				+ "\ncyclicWordsFactor=" + df.format(cyclicWordsFactor) 
-				+ "\nhorizontality=" + df.format(horizontality) 
+				+ "\ntermLevelAvg=" + df.format(termLevelAvg)
+				+ "\ncyclicWordsNumber=" + cyclicWordsNumber
+				+ "\ncyclicWordsFactor=" + df.format(cyclicWordsFactor)
+				+ "\nhorizontality=" + df.format(horizontality)
 				+ "\nverticality=" + df.format(verticality)
 				+ "\n\ntermsFoundInAgrovoc=" + termsFoundInAgrovoc
 				+ "\nagrovocNameMatching=" + df.format(agrovocNameMatching)
 				+ "\nusedTerms=" + sbUsedTerms +
-				
+
 				"\n\n" + nerMetrics.getUsedTokens()
 				+ "\n" + df.format(nerMetrics.getUsedTokensFactor())
-				+ "\n" + nodeCount 
-				+ "\n" + maxLevel 
-				+ "\n" + expansions 
-				+ "\n" + expansionSum 
+				+ "\n" + nodeCount
+				+ "\n" + maxLevel
+				+ "\n" + expansions
+				+ "\n" + expansionSum
 				+ "\n" + df.format(expansionFactorAvg)
-				+ "\n" + df.format(termLevelAvg) 
-				+ "\n" + cyclicWordsNumber 
-				+ "\n" + df.format(cyclicWordsFactor) 
-				+ "\n" + df.format(horizontality) 
+				+ "\n" + df.format(termLevelAvg)
+				+ "\n" + cyclicWordsNumber
+				+ "\n" + df.format(cyclicWordsFactor)
+				+ "\n" + df.format(horizontality)
 				+ "\n" + df.format(verticality)
 				+ "\n" + termsFoundInAgrovoc
 				+ "\n" + df.format(agrovocNameMatching) +
-		
+
 				"\n\n" + nerMetrics.getUsedTokens()
 				+ "\t" + df.format(nerMetrics.getUsedTokensFactor())
-				+ "\t" + nodeCount 
-				+ "\t" + maxLevel 
-				+ "\t" + expansions 
-				+ "\t" + expansionSum 
+				+ "\t" + nodeCount
+				+ "\t" + maxLevel
+				+ "\t" + expansions
+				+ "\t" + expansionSum
 				+ "\t" + df.format(expansionFactorAvg)
-				+ "\t" + df.format(termLevelAvg) 
-				+ "\t" + cyclicWordsNumber 
-				+ "\t" + df.format(cyclicWordsFactor) 
-				+ "\t" + df.format(horizontality) 
+				+ "\t" + df.format(termLevelAvg)
+				+ "\t" + cyclicWordsNumber
+				+ "\t" + df.format(cyclicWordsFactor)
+				+ "\t" + df.format(horizontality)
 				+ "\t" + df.format(verticality)
 				+ "\t" + termsFoundInAgrovoc
 				+ "\t" + df.format(agrovocNameMatching);
